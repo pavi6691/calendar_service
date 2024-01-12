@@ -1,8 +1,16 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.acme.calendar</groupId>
+    <parent>
+        <groupId>com.acme.calendar</groupId>
+        <artifactId>calendar-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <artifactId>calendar-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+
+    <name>Calendar core</name>
+    <description>Calendar core ...</description>
 
 </project>
