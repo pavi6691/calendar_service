@@ -13,4 +13,21 @@
     <name>Calendar models</name>
     <description>Calendar models ...</description>
 
+    <dependencies>
+
+        <!-- Calendar -->
+        <dependency>
+            <groupId>com.acme.calendar</groupId>
+            <artifactId>calendar-core</artifactId>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>
