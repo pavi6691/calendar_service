@@ -20,6 +20,24 @@
         <java.version>21</java.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Calendar -->
+            <dependency>
+                <groupId>com.acme.calendar</groupId>
+                <artifactId>calendar-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.acme.calendar</groupId>
+                <artifactId>calendar-models</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
         <module>clients</module>
         <module>core</module>
