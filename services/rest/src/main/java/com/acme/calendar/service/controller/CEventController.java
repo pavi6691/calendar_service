@@ -1,7 +1,7 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
-import com.acme.calendar.model.event.CEvent;
+import com.acme.calendar.service.model.event.CEvent;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;

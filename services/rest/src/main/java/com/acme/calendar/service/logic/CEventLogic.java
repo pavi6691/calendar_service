@@ -1,6 +1,6 @@
 package com.acme.calendar.service.logic;
 
-import com.acme.calendar.model.event.CEvent;
+import com.acme.calendar.service.model.event.CEvent;
 import com.acme.calendar.service.repository.PGCEventRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

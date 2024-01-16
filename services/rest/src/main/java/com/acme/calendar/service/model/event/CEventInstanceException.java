@@ -1,4 +1,4 @@
-package com.acme.calendar.model.event;
+package com.acme.calendar.service.model.event;
 
 import java.util.UUID;
 
