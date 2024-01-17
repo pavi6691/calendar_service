@@ -2,6 +2,7 @@ package com.acme.calendar.model.set;
 
 import lombok.Builder;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -10,6 +11,7 @@ public record CSet(
 
     UUID uuid,
     String title,
-    String description
+    String description,
+    List<CSetEntry> entries
 
 ) {}
