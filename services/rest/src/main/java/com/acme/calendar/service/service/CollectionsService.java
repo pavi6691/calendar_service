@@ -61,11 +61,14 @@ public class CollectionsService extends AbstractService {
     }
     
     public List<RestCollection> getAll(Pageable pageable, Sort sort) {
-        return pgCSetRepository.findAll().stream().filter(collection -> collection != null).map(collection -> {
-            RestCollection restCollection = new RestCollection();
-            process(collection,restCollection);
-            return restCollection;
-        }).collect(Collectors.toList());
+        Set<UUID> filterChildren = new HashSet<>();
+        return pgCSetRepository.findAll().stream()
+                .filter(collection -> collection != null && !filterChildren.contains(collection.getUuid()))
+                .map(collection -> {
+                    RestCollection restCollection = new RestCollection();
+                    process(collection,restCollection,filterChildren);
+                    return restCollection;
+                }).collect(Collectors.toList());
     }
 
     public RestCollection getByUuid(UUID uuid) {
@@ -74,14 +77,15 @@ public class CollectionsService extends AbstractService {
             return null;
         }
         RestCollection restCollection = new RestCollection();
-        process(collection, restCollection);
+        process(collection, restCollection, new HashSet<>());
         return restCollection;
     }
     
-    private void process(Collection collection,RestCollection restCollection) {
+    private void process(Collection collection,RestCollection restCollection,Set<UUID> filter) {
         if(collection == null) {
             return;
         }
+        filter.add(collection.getUuid());
         restCollection.setUuid(collection.getUuid());
         restCollection.setTitle(collection.getTitle());
         restCollection.setDescription(collection.getDescription());
@@ -94,7 +98,7 @@ public class CollectionsService extends AbstractService {
             RestCollection nestedCollection = RestCollection.builder().type(COLLECTION).uuid(collection.getUuid())
                     .title(collection.getTitle()).description(collection.getDescription()).build();
             collectionEntries[pc.getChildOrder()] = nestedCollection;
-            process(pc.getChild(),nestedCollection);
+            process(pc.getChild(),nestedCollection,filter);
         }
     }
 
