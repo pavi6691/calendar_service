@@ -31,13 +31,13 @@ public class CalendarController {
         return ResponseEntity.ok(service.create(calendar));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_ALL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Calendar>> getAll(Pageable pageable, Sort sort) {
         return ResponseEntity.ok(service.getAll(pageable,sort));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_BY_UUID, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Calendar> getByUuid(UUID uuid) {
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Calendar> getByUuid(@PathVariable UUID uuid) {
         return ResponseEntity.ok(service.getByUuid(uuid));
     }
 
