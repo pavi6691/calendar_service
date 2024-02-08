@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
@@ -23,6 +24,31 @@ import java.util.UUID;
 public class CalendarTest extends AbstractBaseTest<Calendar> {
     PGCCalendarRepository pgcCalendarRepository;
     PGCEventRepository pgcEventRepository;
+
+    private static final UUID TEST_CALENDAR_UUID = UUID.randomUUID();
+    private static final String TEST_CALENDAR_TITLE = "Calendar title";
+    private static final String TEST_CALENDAR_DESCRIPTION = "Calendar description";
+
+    private static final UUID TEST_EVENT_UUID = UUID.randomUUID();
+    private static final String TEST_EVENT_TITLE = "Event title";
+    private static final String TEST_EVENT_DESCRIPTION = "Event description";
+    private static final ZonedDateTime TEST_EVENT_STARTTIME = ZonedDateTime.now();
+    private static final ZonedDateTime TEST_EVENT_ENDTIME = ZonedDateTime.now();
+
+    private static final Calendar TEST_CALENDAR = Calendar.builder()
+            .uuid(TEST_CALENDAR_UUID)
+            .title(TEST_CALENDAR_TITLE)
+            .description(TEST_CALENDAR_DESCRIPTION)
+            .build();
+    private static final Event TEST_EVENT = Event.builder()
+            .uuid(TEST_EVENT_UUID)
+            .title(TEST_EVENT_TITLE)
+            .description(TEST_EVENT_DESCRIPTION)
+            .startTime(TEST_EVENT_STARTTIME)
+            .endTime(TEST_EVENT_ENDTIME)
+            .calendar(TEST_CALENDAR)
+            .build();
+
     
     @Autowired
     public CalendarTest(PGCCalendarRepository pgcCalendarRepository, PGCEventRepository pgcEventRepository) {
@@ -33,9 +59,8 @@ public class CalendarTest extends AbstractBaseTest<Calendar> {
     
     @Test
     void test() {
-        UUID calUUid = UUID.randomUUID();
-        pgcCalendarRepository.save(Calendar.builder().uuid(calUUid).title("cal1").description("desc1").build());
-        pgcEventRepository.save(Event.builder().uuid(UUID.randomUUID()).build());
+        pgcCalendarRepository.save(TEST_CALENDAR);
+        pgcEventRepository.save(TEST_EVENT);
     }
     
 }
