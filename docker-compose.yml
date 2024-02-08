@@ -1,6 +1,19 @@
 version: "3.0"
 
 services:
+  
+  calendar-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    networks:
+      - network-calendar-service
+    depends_on:
+      - postgresql
+    environment:
+      - JAVA_OPTS=  # You can set additional JVM options here if needed
 
   # PostgreSQL
   postgresql:
@@ -11,7 +24,7 @@ services:
       - POSTGRES_USER=postgresql-username
       - POSTGRES_PASSWORD=postgresql-password
     networks:
-      - network-postgresql
+      - network-calendar-service
     ports:
       - 5432:5432
 
@@ -41,8 +54,7 @@ services:
 #      - 5601:5601
 
 networks:
-
-  network-postgresql:
+  network-calendar-service:
     driver: bridge
 #  network-elasticsearch:
 #    driver: bridge
