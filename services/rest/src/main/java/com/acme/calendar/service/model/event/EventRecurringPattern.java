@@ -3,11 +3,9 @@ package com.acme.calendar.service.model.event;
 import java.util.UUID;
 
 
-public record CEvent(
+public record EventRecurringPattern(
 
-    UUID uuid,
-    String title,
-    String description
+    UUID uuid
     // TODO add more fields here
 
 ) {}

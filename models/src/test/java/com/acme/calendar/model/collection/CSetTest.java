@@ -1,4 +1,4 @@
-package com.acme.calendar.model.set;
+package com.acme.calendar.model.collection;
 
 import com.acme.calendar.model.calendar.CCalendar;
 import com.fasterxml.jackson.annotation.JsonInclude;

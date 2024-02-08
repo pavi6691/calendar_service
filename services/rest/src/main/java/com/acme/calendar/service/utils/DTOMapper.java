@@ -1,0 +1,19 @@
+package com.acme.calendar.service.utils;
+
+
+import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.model.collections.Collection;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface DTOMapper {
+    DTOMapper INSTANCE = Mappers.getMapper(DTOMapper.class);
+    
+    void copy(Collection from, @MappingTarget Collection entity);
+    
+    @Mapping(target = "collection", ignore = true)
+    void copy(Calendar from, @MappingTarget Calendar entity);
+}

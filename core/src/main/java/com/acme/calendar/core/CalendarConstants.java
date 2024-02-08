@@ -27,7 +27,7 @@ public class CalendarConstants {
 
     public static final String API_ENDPOINT_DEVOPS = "/devops";
 
-    public static final String API_ENDPOINT_SETS = "/sets";
+    public static final String API_ENDPOINT_SETS = "/collections";
     public static final String API_ENDPOINT_CALENDARS = "/calendars";
     public static final String API_ENDPOINT_EVENTS = "/events";
 
@@ -47,7 +47,7 @@ public class CalendarConstants {
     public static final String API_ENDPOINT_EVENTS_GET_ALL = "";
     public static final String API_ENDPOINT_EVENTS_GET_BY_UUID = "/{" + API_PATH_EVENT_UUID + "}";
     // PUT
-    public static final String API_ENDPOINT_SETS_UPDATE = "";
+    public static final String API_ENDPOINT_SETS_UPDATE = "/{" + API_PATH_SET_UUID + "}";
     public static final String API_ENDPOINT_CALENDARS_UPDATE = "";
     public static final String API_ENDPOINT_EVENTS_UPDATE = "";
     // DELETE

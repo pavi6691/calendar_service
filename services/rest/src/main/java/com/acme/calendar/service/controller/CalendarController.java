@@ -2,6 +2,9 @@ package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
 import com.acme.calendar.model.calendar.CCalendar;
+import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.service.CalendarService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -14,32 +17,39 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = CalendarConstants.API_ENDPOINT_PREFIX + CalendarConstants.API_ENDPOINT_CALENDARS)
-public class CCalendarController {
+public class CalendarController {
 
+    CalendarService service;
+    
+    @Autowired
+    public CalendarController(CalendarService service) {
+        this.service = service;
+    }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CCalendar> create(@RequestBody CCalendar cCalendar) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Calendar> create(@RequestBody Calendar calendar) {
+        return ResponseEntity.ok(service.create(calendar));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_ALL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CCalendar>> getAll(Pageable pageable, Sort sort) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<List<Calendar>> getAll(Pageable pageable, Sort sort) {
+        return ResponseEntity.ok(service.getAll(pageable,sort));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_BY_UUID, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CCalendar> getByUuid(UUID uuid) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Calendar> getByUuid(UUID uuid) {
+        return ResponseEntity.ok(service.getByUuid(uuid));
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CCalendar>> update(@RequestBody CCalendar cCalendar) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Calendar> update(@RequestBody Calendar calendar) {
+        return ResponseEntity.ok(service.update(calendar));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CCalendar>> delete(@RequestBody List<UUID> cCalendars) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<String> delete(@RequestBody List<UUID> calendarsUuids) {
+        service.delete(calendarsUuids);
+        return ResponseEntity.ok("Done!");
     }
 
 }
