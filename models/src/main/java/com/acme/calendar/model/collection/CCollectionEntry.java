@@ -1,4 +1,4 @@
-package com.acme.calendar.model.set;
+package com.acme.calendar.model.collection;
 
 import com.acme.calendar.model.calendar.CCalendar;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,16 +6,16 @@ import lombok.Builder;
 
 
 @Builder
-public record CSetEntry(
+public record CCollectionEntry(
 
-    CSet set,
+    CCollection collection,
     CCalendar calendar
 
 ) {
 
     @JsonIgnore
-    public boolean isSet() {
-        return set() != null;
+    public boolean isCollection() {
+        return collection() != null;
     }
 
     @JsonIgnore

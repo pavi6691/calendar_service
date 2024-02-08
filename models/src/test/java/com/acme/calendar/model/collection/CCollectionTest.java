@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class CSetTest {
+public class CCollectionTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);;
@@ -20,7 +20,7 @@ public class CSetTest {
     private static final String TEST_TITLE = "TITLE";
     private static final String TEST_DESCRIPTION = "DESCRIPTION";
 
-    private static final CSet TEST_SET_NO_ENTRIES = CSet.builder()
+    private static final CCollection TEST_COLLECTION_NO_ENTRIES = CCollection.builder()
             .uuid(TEST_UUID)
             .title(TEST_TITLE)
             .description(TEST_DESCRIPTION)
@@ -30,28 +30,28 @@ public class CSetTest {
             .title(TEST_TITLE)
             .description(TEST_DESCRIPTION)
             .build();
-    private static final CSet TEST_CSET_WITH_SET_AND_CALENDAR = CSet.builder()
+    private static final CCollection TEST_COLLECTION_WITH_COLLECTION_AND_CALENDAR = CCollection.builder()
             .uuid(TEST_UUID)
             .title(TEST_TITLE)
             .description(TEST_DESCRIPTION)
             .entries(List.of(
-                    CSetEntry.builder()
-                            .set(TEST_SET_NO_ENTRIES)
+                    CCollectionEntry.builder()
+                            .collection(TEST_COLLECTION_NO_ENTRIES)
                             .build(),
-                    CSetEntry.builder()
+                    CCollectionEntry.builder()
                             .calendar(TEST_CALENDAR)
                             .build()
             ))
             .build();
-    private static final CSet TEST_CSET_WITH_TWO_CALENDARS = CSet.builder()
+    private static final CCollection TEST_COLLECTION_WITH_TWO_CALENDARS = CCollection.builder()
             .uuid(TEST_UUID)
             .title(TEST_TITLE)
             .description(TEST_DESCRIPTION)
             .entries(List.of(
-                    CSetEntry.builder()
+                    CCollectionEntry.builder()
                             .calendar(TEST_CALENDAR)
                             .build(),
-                    CSetEntry.builder()
+                    CCollectionEntry.builder()
                             .calendar(TEST_CALENDAR)
                             .build()
             ))
@@ -61,13 +61,13 @@ public class CSetTest {
     @Test
     @DisplayName("Test ...")
     void testXXX() throws JsonProcessingException {
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(TEST_CSET_WITH_SET_AND_CALENDAR));
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(TEST_COLLECTION_WITH_COLLECTION_AND_CALENDAR));
     }
 
     @Test
     @DisplayName("Test ...")
     void testXXXX() throws JsonProcessingException {
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(TEST_CSET_WITH_TWO_CALENDARS));
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(TEST_COLLECTION_WITH_TWO_CALENDARS));
     }
 
 }

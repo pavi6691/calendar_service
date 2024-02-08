@@ -1,4 +1,4 @@
-package com.acme.calendar.model.set;
+package com.acme.calendar.model.collection;
 
 import lombok.Builder;
 
@@ -7,11 +7,11 @@ import java.util.UUID;
 
 
 @Builder
-public record CSet(
+public record CCollection(
 
     UUID uuid,
     String title,
     String description,
-    List<CSetEntry> entries
+    List<CCollectionEntry> entries
 
 ) {}
