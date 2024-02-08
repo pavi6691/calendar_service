@@ -140,8 +140,8 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>application.yml</include>
-                    <include>banner.txt</include>
-                    <include>mappings/**</include>
+                    <include>banner.txt</include>        <!-- TODO Create file or remove from here -->
+                    <include>mappings/**</include>       <!-- TODO Create folder/files or remove from here -->
                 </includes>
             </resource>
         </resources>
@@ -178,7 +178,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.kbytes.liveaddress.LiveaddressApplication</mainClass>
+                    <mainClass>com.acme.calendar.service.CalendarApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
