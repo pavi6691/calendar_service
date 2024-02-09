@@ -128,18 +128,27 @@ public class CollectionsService extends AbstractService {
 //        }
 //    }
 
-    @Transactional
+
     public void update(UUID uuid, UpdateCollectionRequest updateCollectionRequests) {
         Collection existingCollection = pgCSetRepository.findById(uuid).orElse(null);
         if(existingCollection == null) {
             return;
         }
         Map<UUID,CollectionOrder> childCollectionOrders = existingCollection.getMappings().stream().collect(
-        Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
+                Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
         Map<UUID,Calendar> childCalendars = existingCollection.getCalendar().stream().collect(
                 Collectors.toMap(co -> co.getUuid(), Function.identity()));
+        update(existingCollection,updateCollectionRequests,childCollectionOrders,childCalendars);
+        pgcCalendarRepository.deleteAllById(childCalendars.values().stream().map(cc -> cc.getUuid()).collect(Collectors.toList()));
+        pgCollectionOrderRepository.deleteAllById(childCollectionOrders.values().stream().map(id -> id.getId()).collect(Collectors.toList()));
+    }
+    @Transactional
+    private void update(Collection existingCollection, UpdateCollectionRequest updateCollectionRequests,
+                       Map<UUID,CollectionOrder> childCollectionOrders,Map<UUID,Calendar> childCalendars) {
         AtomicInteger order  = new AtomicInteger(0);
-        updateCollectionRequests.items().stream().forEach(updateCollectionRequest -> {
+        Set<UUID> filterDuplicateJustInCaseFromFrontEnd = new HashSet<>();
+        updateCollectionRequests.items().stream().filter(f -> !filterDuplicateJustInCaseFromFrontEnd.contains(f)).forEach(updateCollectionRequest -> {
+            filterDuplicateJustInCaseFromFrontEnd.add(updateCollectionRequest.getUuid());
             if(updateCollectionRequest instanceof Calendar) {
                 Calendar calendar = (Calendar) updateCollectionRequest;
                 calendar.setOrder(order.get());
@@ -149,7 +158,8 @@ public class CollectionsService extends AbstractService {
                     calendar.setUuid(existingCalendar.getUuid());
                     DTOMapper.INSTANCE.copy(calendar,existingCalendar);
                 } else {
-                    calendar.setUuid(UUID.randomUUID());
+                    if(calendar.getUuid() == null)
+                        calendar.setUuid(UUID.randomUUID());
                     calendar.setCollection(existingCollection);
                     pgcCalendarRepository.save(calendar);
                 }
@@ -162,7 +172,8 @@ public class CollectionsService extends AbstractService {
                     DTOMapper.INSTANCE.copy(collection,existingChildCollection.getChild());
                     existingChildCollection.setChildOrder(order.get());
                 } else {
-                    collection.setUuid(UUID.randomUUID());
+                    if(collection.getUuid() == null)
+                        collection.setUuid(UUID.randomUUID());
                     collection.getMappings()
                             .add(CollectionOrder.builder().parent(existingCollection).child(collection).childOrder(order.get()).build());
                     pgCSetRepository.save(collection);
@@ -172,8 +183,6 @@ public class CollectionsService extends AbstractService {
             order.getAndIncrement();
         });
         pgCSetRepository.save(existingCollection);
-        pgCollectionOrderRepository.deleteAllById(childCollectionOrders.values().stream().map(id -> id.getId()).collect(Collectors.toList()));
-        pgcCalendarRepository.deleteAll(childCalendars.values());
     }
 
     public void delete(List<UUID> cSets) {
@@ -210,5 +219,4 @@ public class CollectionsService extends AbstractService {
                 .setParameter("nestedUuids", collectionAndCalendarUuids)
                 .getResultList().stream().collect(Collectors.toMap(Calendar::getUuid, cal -> cal));
     }
-
 }

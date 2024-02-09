@@ -2,6 +2,7 @@ package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
 import com.acme.calendar.service.model.collections.Collection;
+import com.acme.calendar.service.model.collections.CollectionOrderPK;
 import com.acme.calendar.service.model.rest.request.UpdateCollectionRequest;
 import com.acme.calendar.service.model.rest.response.RestCollection;
 import com.acme.calendar.service.service.CollectionsService;

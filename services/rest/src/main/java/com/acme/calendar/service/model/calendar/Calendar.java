@@ -19,6 +19,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Calendar implements IEntry<Calendar> {
+        @Transient
         String type = "calendar";
         @Id
         @Column(name = "guid", nullable = false)
@@ -40,16 +41,4 @@ public class Calendar implements IEntry<Calendar> {
         @Column(name = "order_seq")
         @JsonIgnore
         int order;
-
-        @Override
-        public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof Calendar calendar)) return false;
-                return Objects.equals(getUuid(), calendar.getUuid());
-        }
-
-        @Override
-        public int hashCode() {
-                return Objects.hash(getUuid());
-        }
 } 
