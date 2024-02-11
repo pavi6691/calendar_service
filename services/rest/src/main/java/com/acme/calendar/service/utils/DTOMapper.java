@@ -14,6 +14,5 @@ public interface DTOMapper {
     
     void copy(Collection from, @MappingTarget Collection entity);
     
-    @Mapping(target = "collection", ignore = true)
     void copy(Calendar from, @MappingTarget Calendar entity);
 }

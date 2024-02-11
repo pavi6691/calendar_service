@@ -13,7 +13,7 @@ public class AbstractService {
     public int getOrder(UUID parentUuid) {
         if (parentUuid != null) {
             Query query = entityManager.createQuery("SELECT GREATEST(\n" +
-                    "    (SELECT MAX(cal.order) FROM Calendar cal WHERE cal.collection.uuid = :parentId),\n" +
+                    "    (SELECT MAX(cal.childOrder) FROM CalendarMapping cal WHERE cal.parent.uuid = :parentId),\n" +
                     "    (SELECT MAX(co.childOrder) FROM CollectionOrder co WHERE co.parent.uuid = :parentId)\n" +
                     ")\n");
             query.setParameter("parentId", parentUuid);

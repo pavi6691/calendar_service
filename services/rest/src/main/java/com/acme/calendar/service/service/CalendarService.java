@@ -1,6 +1,7 @@
 package com.acme.calendar.service.service;
 
 import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,13 +29,25 @@ public class CalendarService extends AbstractService {
 
 
     public Calendar create(Calendar calendar) {
-        calendar.setUuid(UUID.randomUUID());
-        if(calendar.getCollection() != null) {
-            calendar.setOrder(getOrder(calendar.getCollection().getUuid()));
+        UUID uuid;
+        if(calendar.getUuid() != null) {
+            uuid = calendar.getUuid();
         } else {
-            calendar.setOrder(0);
+            uuid = UUID.randomUUID();
         }
-        return pgCCalendarRepository.save(calendar);
+        if(calendar.getMappings() != null) {
+            calendar.getMappings().stream().forEach(pc -> {
+                if(pc.getParent() != null) {
+                    if(pc.getChildOrder() == -1) {
+                        pc.setChildOrder(getOrder(pc.getParent().getUuid()));
+                    }
+                    pc.setCalendar(Calendar.builder().uuid(uuid).build());
+                }
+            });
+        }
+        calendar.setUuid(uuid);
+        pgCCalendarRepository.save(calendar);
+        return getByUuid(calendar.getUuid());
     }
     
     public List<Calendar> getAll(Pageable pageable, Sort sort) {

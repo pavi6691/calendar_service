@@ -1,13 +1,12 @@
 package com.acme.calendar.service.model.calendar;
 import com.acme.calendar.service.model.IEntry;
-import com.acme.calendar.service.model.collections.Collection;
+import com.acme.calendar.service.model.collections.CollectionOrder;
 import com.acme.calendar.service.model.event.Event;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+
+import java.util.*;
 
 @Getter
 @Setter
@@ -30,15 +29,12 @@ public class Calendar implements IEntry<Calendar> {
         String description;
         
         @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-        @JsonManagedReference
+        @JsonManagedReference(value="event-mapping")
         List<Event> events;
-        
-        @JoinColumn(name = "collection_guid")
-        @ManyToOne
-        @JsonBackReference
-        Collection collection;
 
-        @Column(name = "order_seq")
+        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OrderBy("childOrder ASC")
+        @JsonManagedReference(value="calendar-mapping")
         @JsonIgnore
-        int order;
+        private Set<CalendarMapping> mappings = new HashSet<>();
 } 

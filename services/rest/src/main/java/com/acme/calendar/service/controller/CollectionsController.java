@@ -46,9 +46,9 @@ public class CollectionsController {
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestCollection> update(@PathVariable(name = API_PATH_COLLECTION_UUID) UUID uuid, @RequestBody UpdateCollectionRequest updateCollectionRequest) {
-        service.update(uuid, updateCollectionRequest);
-        return ResponseEntity.ok(service.getByUuid(uuid));
+    public ResponseEntity<RestCollection> update(@RequestBody UpdateCollectionRequest updateCollectionRequest) {
+        service.update(updateCollectionRequest.uuid(), updateCollectionRequest);
+        return ResponseEntity.ok(service.getByUuid(updateCollectionRequest.uuid()));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

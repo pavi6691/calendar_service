@@ -2,6 +2,7 @@ package com.acme.calendar.service.model.collections;
 
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,10 +27,10 @@ public class Collection implements IEntry<Collection> {
         UUID uuid;
         String title;
         String description;
-        
-        @OneToMany(mappedBy = "collection", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-        @JsonManagedReference
-        private Set<Calendar> calendars = new HashSet<>();
+
+        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OrderBy("childOrder ASC")
+        private Set<CalendarMapping> calendarMapping = new HashSet<>();
         
         @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
         @OrderBy("childOrder ASC")

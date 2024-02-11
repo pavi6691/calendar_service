@@ -35,6 +35,6 @@ public class Event {
 
     @ManyToOne()
     @JoinColumn(name = "calendar_guid", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value="event-mapping")
     Calendar calendar;
 }
