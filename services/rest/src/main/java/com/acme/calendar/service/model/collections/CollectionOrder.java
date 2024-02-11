@@ -1,4 +1,5 @@
 package com.acme.calendar.service.model.collections;
+import com.acme.calendar.service.model.calendar.Calendar;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,7 +7,7 @@ import lombok.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "collection_order")
+@Table(name = "collection_mapping")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)

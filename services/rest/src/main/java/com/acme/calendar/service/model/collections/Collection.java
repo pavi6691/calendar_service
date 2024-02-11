@@ -26,9 +26,11 @@ public class Collection implements IEntry<Collection> {
         UUID uuid;
         String title;
         String description;
+        
         @OneToMany(mappedBy = "collection", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
         @JsonManagedReference
-        private Set<Calendar> calendar = new HashSet<>();
+        private Set<Calendar> calendars = new HashSet<>();
+        
         @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
         @OrderBy("childOrder ASC")
         private Set<CollectionOrder> mappings = new HashSet<>();

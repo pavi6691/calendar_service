@@ -3,7 +3,6 @@ package com.acme.calendar.service.service;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.collections.CollectionOrder;
-import com.acme.calendar.service.model.collections.CollectionOrderPK;
 import com.acme.calendar.service.model.event.Event;
 import com.acme.calendar.service.model.rest.request.UpdateCollectionRequest;
 import com.acme.calendar.service.model.rest.response.RestCollection;
@@ -95,8 +94,8 @@ public class CollectionsService extends AbstractService {
         restCollection.setUuid(collection.getUuid());
         restCollection.setTitle(collection.getTitle());
         restCollection.setDescription(collection.getDescription());
-        Object[] collectionEntries = restCollection.getCollection(collection.getCalendar().size() + collection.getMappings().size());
-        for (Calendar c : collection.getCalendar()) {
+        Object[] collectionEntries = restCollection.getCollection(collection.getCalendars().size() + collection.getMappings().size());
+        for (Calendar c : collection.getCalendars()) {
             c.setType(CALENDAR);
             collectionEntries[c.getOrder()] = c;
         }
@@ -136,7 +135,7 @@ public class CollectionsService extends AbstractService {
         }
         Map<UUID,CollectionOrder> childCollectionOrders = existingCollection.getMappings().stream().collect(
                 Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
-        Map<UUID,Calendar> childCalendars = existingCollection.getCalendar().stream().collect(
+        Map<UUID,Calendar> childCalendars = existingCollection.getCalendars().stream().collect(
                 Collectors.toMap(co -> co.getUuid(), Function.identity()));
         update(existingCollection,updateCollectionRequests,childCollectionOrders,childCalendars);
         pgcCalendarRepository.deleteAllById(childCalendars.values().stream().map(cc -> cc.getUuid()).collect(Collectors.toList()));
