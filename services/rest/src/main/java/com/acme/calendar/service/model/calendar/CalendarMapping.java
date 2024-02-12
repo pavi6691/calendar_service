@@ -25,14 +25,14 @@ public class CalendarMapping {
     @EmbeddedId
     private MappingPK id = new MappingPK();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("parentId")
     @JoinColumn(name = "parent_id")
     @JsonBackReference()
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @MapsId("childId")
     @JsonBackReference(value="calendar-mapping")
     private Calendar calendar;

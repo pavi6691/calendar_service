@@ -19,14 +19,14 @@ public class CollectionMapping {
     @EmbeddedId
     private MappingPK id = new MappingPK();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("parentId")
     @JsonBackReference
     @JoinColumn(name = "parent_id")
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.REMOVE)
     @MapsId("childId")
     private Collection child;
 
