@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,24 +45,32 @@ public class CollectionsService extends AbstractService {
 
 
     public Collection create(Collection collection) {
-        UUID uuid;
         if(collection.getUuid() != null) {
-            uuid = collection.getUuid();   
+            collection.setUuid(collection.getUuid());   
         } else {
-            uuid = UUID.randomUUID();
+            collection.setUuid(UUID.randomUUID());
         }
+        AtomicReference<Collection> nested = new AtomicReference<>();
         if(collection.getMappings() != null) {
             collection.getMappings().stream().forEach(pc -> {
                 if(pc.getParent() != null) {
+                    nested.set(pgCSetRepository.findById(pc.getParent().getUuid()).orElse(null));
+                    if(nested.get() == null) {
+                        return;
+                    }
                     if(pc.getChildOrder() == -1) {
                         pc.setChildOrder(getOrder(pc.getParent().getUuid()));
                     }
-                    pc.setChild(Collection.builder().uuid(uuid).build());
+                    pc.setChild(collection);
+                    nested.get().getMappings().add(pc);
                 }
             });
         }
-        collection.setUuid(uuid);
-        pgCSetRepository.save(collection);
+        if(nested.get() != null && !nested.get().getMappings().isEmpty()) {
+            pgCSetRepository.save(nested.get());   
+        } else {
+            pgCSetRepository.save(collection);
+        }
         return getByUuid(collection.getUuid());
     }
     

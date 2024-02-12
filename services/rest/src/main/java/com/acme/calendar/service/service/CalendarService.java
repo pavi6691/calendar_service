@@ -3,6 +3,7 @@ package com.acme.calendar.service.service;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
+import com.acme.calendar.service.repository.PGCollectionsRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,41 +13,52 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 @Service
 public class CalendarService extends AbstractService {
 
+    PGCollectionsRepository pgCSetRepository;
     PGCCalendarRepository pgCCalendarRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
 
 
     @Autowired
-    public CalendarService(PGCCalendarRepository pgCCalendarRepository) {
+    public CalendarService(PGCCalendarRepository pgCCalendarRepository, PGCollectionsRepository pgCSetRepository) {
         this.pgCCalendarRepository = pgCCalendarRepository;
+        this.pgCSetRepository = pgCSetRepository;
     }
 
 
     public Calendar create(Calendar calendar) {
-        UUID uuid;
         if(calendar.getUuid() != null) {
-            uuid = calendar.getUuid();
+            calendar.setUuid(calendar.getUuid());
         } else {
-            uuid = UUID.randomUUID();
+            calendar.setUuid(UUID.randomUUID());
         }
+        AtomicReference<Collection> nested = new AtomicReference<>();
         if(calendar.getMappings() != null) {
             calendar.getMappings().stream().forEach(pc -> {
                 if(pc.getParent() != null) {
-                    if(pc.getChildOrder() == -1) {
-                        pc.setChildOrder(getOrder(pc.getParent().getUuid()));
+                    if(pc.getParent() != null) {
+                        nested.set(pgCSetRepository.findById(pc.getParent().getUuid()).orElse(null));
+                        if(nested.get() == null) {
+                            return;
+                        }
+                        if(pc.getChildOrder() == -1) {
+                            pc.setChildOrder(getOrder(pc.getParent().getUuid()));
+                        }
+                        pc.setCalendar(calendar);
+                        nested.get().getCalendarMapping().add(pc);
                     }
-                    pc.setCalendar(Calendar.builder().uuid(uuid).build());
                 }
             });
         }
-        calendar.setUuid(uuid);
-        pgCCalendarRepository.save(calendar);
+        if(nested.get() != null && !nested.get().getMappings().isEmpty()) {
+            pgCSetRepository.save(nested.get());
+        } else {
+            pgCCalendarRepository.save(calendar);
+        }
         return getByUuid(calendar.getUuid());
     }
     
