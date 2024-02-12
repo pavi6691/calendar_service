@@ -4,8 +4,6 @@ import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
 import com.acme.calendar.service.repository.PGCollectionsRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
