@@ -1,8 +1,7 @@
 package com.acme.calendar.service.model.calendar;
 
 import com.acme.calendar.service.model.collections.Collection;
-import com.acme.calendar.service.model.collections.CollectionOrder;
-import com.acme.calendar.service.model.collections.CollectionOrderPK;
+import com.acme.calendar.service.model.collections.MappingPK;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,16 +23,16 @@ import java.util.Objects;
 public class CalendarMapping {
 
     @EmbeddedId
-    private CollectionOrderPK id = new CollectionOrderPK();
+    private MappingPK id = new MappingPK();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("parentId")
     @JoinColumn(name = "parent_id")
     @JsonBackReference()
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapsId("childId")
     @JsonBackReference(value="calendar-mapping")
     private Calendar calendar;
@@ -45,8 +44,7 @@ public class CalendarMapping {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CollectionOrder)) return false;
-        CollectionOrder that = (CollectionOrder) o;
+        if (!(o instanceof CalendarMapping that)) return false;
         return Objects.equals(getId(), that.getId());
     }
 

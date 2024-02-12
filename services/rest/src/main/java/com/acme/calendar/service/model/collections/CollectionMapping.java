@@ -1,5 +1,4 @@
 package com.acme.calendar.service.model.collections;
-import com.acme.calendar.service.model.calendar.Calendar;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,10 +14,10 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionOrder {
+public class CollectionMapping {
     
     @EmbeddedId
-    private CollectionOrderPK id = new CollectionOrderPK();
+    private MappingPK id = new MappingPK();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("parentId")
@@ -27,7 +26,7 @@ public class CollectionOrder {
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
     @MapsId("childId")
     private Collection child;
 
@@ -38,8 +37,7 @@ public class CollectionOrder {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CollectionOrder)) return false;
-        CollectionOrder that = (CollectionOrder) o;
+        if (!(o instanceof CollectionMapping that)) return false;
         return Objects.equals(getId(), that.getId());
     }
 

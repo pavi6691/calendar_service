@@ -1,16 +1,12 @@
 package com.acme.calendar.service.model.collections;
 
 import com.acme.calendar.service.model.IEntry;
-import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Table(name = "collections")
 @Entity(name = "collection")
@@ -22,19 +18,31 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Collection implements IEntry<Collection> {
+        
+        @Transient
+        String type = "collection";
         @Id
         @Column(name = "guid", nullable = false)
         UUID uuid;
         String title;
         String description;
+        
+        @Transient
+        IEntry[] items;
+        public IEntry[] getCollection(int size) {
+            items = new IEntry[size];
+            return items;
+        }
 
-        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
         @OrderBy("childOrder ASC")
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private Set<CalendarMapping> calendarMapping = new HashSet<>();
         
-        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
         @OrderBy("childOrder ASC")
-        private Set<CollectionOrder> mappings = new HashSet<>();
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        private Set<CollectionMapping> mappings = new HashSet<>();
 
         @Override
         public boolean equals(Object o) {

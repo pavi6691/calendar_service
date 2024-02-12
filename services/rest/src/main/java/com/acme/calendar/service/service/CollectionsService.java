@@ -3,15 +3,14 @@ package com.acme.calendar.service.service;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.model.calendar.Calendar;
-import com.acme.calendar.service.model.collections.CollectionOrder;
+import com.acme.calendar.service.model.collections.CollectionMapping;
+import com.acme.calendar.service.model.collections.MappingPK;
 import com.acme.calendar.service.model.event.Event;
-import com.acme.calendar.service.model.rest.request.UpdateCollectionRequest;
-import com.acme.calendar.service.model.rest.response.RestCollection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
-import com.acme.calendar.service.repository.PGCalendarMappingRepo;
-import com.acme.calendar.service.repository.PGCollectionOrderRepository;
 import com.acme.calendar.service.repository.PGCollectionsRepository;
 import com.acme.calendar.service.utils.DTOMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,24 +30,20 @@ public class CollectionsService extends AbstractService {
     
     PGCCalendarRepository pgcCalendarRepository;
     
-    PGCollectionOrderRepository pgCollectionOrderRepository;
-
-    PGCalendarMappingRepo pgCalendarMappingRepo;
+    @PersistenceContext
+    EntityManager entityManager;
     
     private static final String CALENDAR = "calendar";
     private static final String COLLECTION = "collection";
 
     @Autowired
-    public CollectionsService(PGCollectionsRepository pgCSetRepository,PGCCalendarRepository pgcCalendarRepository,
-                              PGCollectionOrderRepository pgCollectionOrderRepository,PGCalendarMappingRepo pgCalendarMappingRepo) {
+    public CollectionsService(PGCollectionsRepository pgCSetRepository,PGCCalendarRepository pgcCalendarRepository) {
         this.pgCSetRepository = pgCSetRepository;
         this.pgcCalendarRepository = pgcCalendarRepository;
-        this.pgCollectionOrderRepository = pgCollectionOrderRepository;
-        this.pgCalendarMappingRepo = pgCalendarMappingRepo;
     }
 
 
-    public RestCollection create(Collection collection) {
+    public Collection create(Collection collection) {
         UUID uuid;
         if(collection.getUuid() != null) {
             uuid = collection.getUuid();   
@@ -70,28 +65,28 @@ public class CollectionsService extends AbstractService {
         return getByUuid(collection.getUuid());
     }
     
-    public List<RestCollection> getAll(Pageable pageable, Sort sort) {
+    public List<Collection> getAll(Pageable pageable, Sort sort) {
         Set<UUID> filterChildren = new HashSet<>();
         return pgCSetRepository.findAll().stream()
                 .filter(collection -> collection != null && !filterChildren.contains(collection.getUuid()))
                 .map(collection -> {
-                    RestCollection restCollection = new RestCollection();
+                    Collection restCollection = new Collection();
                     process(collection,restCollection,filterChildren);
                     return restCollection;
                 }).collect(Collectors.toList());
     }
 
-    public RestCollection getByUuid(UUID uuid) {
+    public Collection getByUuid(UUID uuid) {
         Collection collection = pgCSetRepository.findById(uuid).orElse(null);
         if(collection == null) {
             return null;
         }
-        RestCollection restCollection = new RestCollection();
+        Collection restCollection = new Collection();
         process(collection, restCollection, new HashSet<>());
         return restCollection;
     }
     
-    private void process(Collection collection,RestCollection restCollection,Set<UUID> filter) {
+    private void process(Collection collection,Collection restCollection,Set<UUID> filter) {
         if(collection == null) {
             return;
         }
@@ -104,8 +99,8 @@ public class CollectionsService extends AbstractService {
             c.getCalendar().setType(CALENDAR);
             collectionEntries[c.getChildOrder()] = c.getCalendar(); 
         });
-        for (CollectionOrder pc : collection.getMappings()) {
-            RestCollection nestedCollection = RestCollection.builder().type(COLLECTION).uuid(collection.getUuid())
+        for (CollectionMapping pc : collection.getMappings()) {
+            Collection nestedCollection = Collection.builder().type(COLLECTION).uuid(collection.getUuid())
                     .title(collection.getTitle()).description(collection.getDescription()).build();
             collectionEntries[pc.getChildOrder()] = nestedCollection;
             process(pc.getChild(),nestedCollection,filter);
@@ -125,75 +120,91 @@ public class CollectionsService extends AbstractService {
 //            c.setType(CALENDAR);
 //            items.putIfAbsent(CALENDAR,new HashMap<>()).put(c.getUuid(),c);
 //        }
-//        for (CollectionOrder pc : collection.getParentChildOrders()) {
+//        for (CollectionMapping pc : collection.getParentChildOrders()) {
 //            RestCollection nestedCollection = RestCollection.builder().type(COLLECTION).uuid(collection.getUuid())
 //                    .title(collection.getTitle()).description(collection.getDescription()).build();
 //            items.putIfAbsent(COLLECTION,new HashMap<>()).put(nestedCollection.getUuid(),nestedCollection);
 //        }
 //    }
-
-
     
-    public void update(UUID uuid, UpdateCollectionRequest updateCollectionRequests) {
-        Collection existingCollection = pgCSetRepository.findById(uuid).orElse(null);
+    @Transactional
+    public void update(Collection updateCollectionRequests) {
+        Collection existingCollection = entityManager.find(Collection.class,updateCollectionRequests.getUuid());
         if(existingCollection == null) {
             return;
         }
-
+        DTOMapper.INSTANCE.copy(updateCollectionRequests,existingCollection);
         // Copy existing mappings and orders into temporary maps
-        Map<UUID,CollectionOrder> childCollectionOrders = existingCollection.getMappings().stream().collect(
+        Map<UUID, CollectionMapping> collectionMapping = existingCollection.getMappings().stream().collect(
                 Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
-        Map<UUID,CalendarMapping> calenderMapping = existingCollection.getCalendarMapping().stream()
+        Map<UUID,CalendarMapping> calendarMapping = existingCollection.getCalendarMapping().stream()
                 .collect(Collectors.toMap(co -> co.getCalendar().getUuid(), Function.identity()));
-
-        // Perform update
-        update(existingCollection,updateCollectionRequests,childCollectionOrders,calenderMapping);
-
-        // Delete orphaned calendar mappings
-        pgCalendarMappingRepo.deleteAllById(calenderMapping.values().stream().map(cc -> cc.getId()).collect(Collectors.toList()));
-
-        // Delete orphaned collection orders
-        pgCollectionOrderRepository.deleteAllById(childCollectionOrders.values().stream().map(id -> id.getId()).collect(Collectors.toList()));
-
-        // Save the updated collection
-        pgCSetRepository.save(existingCollection);
+        
+        // provision updates
+        update(existingCollection,updateCollectionRequests,collectionMapping,calendarMapping);
+        
+        // save results to db
+        saveToDb(existingCollection,collectionMapping,calendarMapping);
     }
-    @Transactional
-    private void update(Collection existingCollection, UpdateCollectionRequest updateCollectionRequests,
-                       Map<UUID,CollectionOrder> childCollectionOrders,Map<UUID,CalendarMapping> calenderMapping) {
+
+    private void saveToDb(Collection existingCollection,
+                          Map<UUID, CollectionMapping> collectionsToDelete,
+                          Map<UUID, CalendarMapping> calendarsToDelete) {
+
+        // Remove orphaned collection orders
+        existingCollection.getMappings().removeAll(collectionsToDelete.values());
+
+        // Remove orphaned calendar mappings
+        existingCollection.getCalendarMapping().removeAll(calendarsToDelete.values());
+        
+        // Save the updated collection
+        entityManager.merge(existingCollection);
+    }
+
+    
+    private void update(Collection existingCollection,
+                        Collection updateCollectionRequests,
+                        Map<UUID, CollectionMapping> collectionMapping,
+                        Map<UUID,CalendarMapping> calenderMapping) {
+        if(updateCollectionRequests.getItems() == null) {
+            return;
+        }
         AtomicInteger order  = new AtomicInteger(0);
         Set<UUID> filterDuplicateJustInCaseFromFrontEnd = new HashSet<>();
-        updateCollectionRequests.items().stream().filter(f -> !filterDuplicateJustInCaseFromFrontEnd.contains(f)).forEach(updateCollectionRequest -> {
+        Arrays.stream(updateCollectionRequests.getItems()).filter(f -> !filterDuplicateJustInCaseFromFrontEnd.contains(f))
+                .forEach(updateCollectionRequest -> {
             filterDuplicateJustInCaseFromFrontEnd.add(updateCollectionRequest.getUuid());
             if(updateCollectionRequest instanceof Calendar) {
                 Calendar calendar = (Calendar) updateCollectionRequest;
                 if(calenderMapping != null && calenderMapping.containsKey(calendar.getUuid())) {
-                    CalendarMapping existingCalendar = calenderMapping.get(calendar.getUuid());
-                    calendar.setUuid(existingCalendar.getCalendar().getUuid());
-                    DTOMapper.INSTANCE.copy(calendar,existingCalendar.getCalendar());
-                    existingCalendar.setChildOrder(order.get());
+                    CalendarMapping existingCalendarMapping = calenderMapping.get(calendar.getUuid());
+                    calendar.setUuid(existingCalendarMapping.getCalendar().getUuid());
+                    DTOMapper.INSTANCE.copy(calendar,existingCalendarMapping.getCalendar());
+                    existingCalendarMapping.setChildOrder(order.get());
                 } else {
-                    if(calendar.getUuid() == null)
+                    if(calendar.getUuid() == null) 
                         calendar.setUuid(UUID.randomUUID());
-                    calendar.getMappings().add(CalendarMapping.builder().calendar(calendar).parent(existingCollection).childOrder(order.get()).build());
-                    pgcCalendarRepository.save(calendar);
+                    existingCollection.getCalendarMapping().add(CalendarMapping.builder()
+                            .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(calendar.getUuid()).build())
+                            .calendar(calendar).parent(existingCollection).childOrder(order.get()).build());
                 }
                 calenderMapping.remove(calendar.getUuid());
             } else if(updateCollectionRequest instanceof Collection) {
                 Collection collection = (Collection) updateCollectionRequest;
-                if(childCollectionOrders != null && childCollectionOrders.containsKey(collection.getUuid())) {
-                    CollectionOrder existingChildCollection = childCollectionOrders.get(collection.getUuid());
+                if(collectionMapping != null && collectionMapping.containsKey(collection.getUuid())) {
+                    CollectionMapping existingChildCollection = collectionMapping.get(collection.getUuid());
                     collection.setUuid(existingChildCollection.getChild().getUuid());
                     DTOMapper.INSTANCE.copy(collection,existingChildCollection.getChild());
                     existingChildCollection.setChildOrder(order.get());
                 } else {
-                    if(collection.getUuid() == null)
+                    if(collection.getUuid() == null) 
                         collection.setUuid(UUID.randomUUID());
-                    collection.getMappings()
-                            .add(CollectionOrder.builder().parent(existingCollection).child(collection).childOrder(order.get()).build());
-                    pgCSetRepository.save(collection);
+                    existingCollection.getMappings()
+                            .add(CollectionMapping.builder()
+                                    .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(collection.getUuid()).build())
+                                    .parent(existingCollection).child(collection).childOrder(order.get()).build());
                 }
-                childCollectionOrders.remove(collection.getUuid());
+                collectionMapping.remove(collection.getUuid());
             }
             order.getAndIncrement();
         });

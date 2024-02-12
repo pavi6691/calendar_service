@@ -1,6 +1,5 @@
 package com.acme.calendar.service.model.calendar;
 import com.acme.calendar.service.model.IEntry;
-import com.acme.calendar.service.model.collections.CollectionOrder;
 import com.acme.calendar.service.model.event.Event;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
@@ -35,6 +34,6 @@ public class Calendar implements IEntry<Calendar> {
         @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
         @OrderBy("childOrder ASC")
         @JsonManagedReference(value="calendar-mapping")
-        @JsonIgnore
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private Set<CalendarMapping> mappings = new HashSet<>();
 } 

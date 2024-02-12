@@ -11,15 +11,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CollectionOrderPK implements Serializable {
+public class MappingPK implements Serializable {
     private UUID parentId;
     private UUID childId;
     
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CollectionOrderPK)) return false;
-        CollectionOrderPK that = (CollectionOrderPK) o;
+        if (!(o instanceof MappingPK)) return false;
+        MappingPK that = (MappingPK) o;
         return Objects.equals(getParentId(), that.getParentId()) &&
                 Objects.equals(getChildId(), that.getChildId());
     }
