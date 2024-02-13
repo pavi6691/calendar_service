@@ -52,7 +52,7 @@ public class CalendarService extends AbstractService {
                 }
             });
         }
-        if(nested.get() != null && !nested.get().getMappings().isEmpty()) {
+        if(nested.get() != null && !nested.get().getCollectionMappings().isEmpty()) {
             pgCSetRepository.save(nested.get());
         } else {
             pgCCalendarRepository.save(calendar);
