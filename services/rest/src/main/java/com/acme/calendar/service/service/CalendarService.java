@@ -4,11 +4,13 @@ import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
 import com.acme.calendar.service.repository.PGCollectionsRepository;
+import com.acme.calendar.service.utils.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,8 +63,16 @@ public class CalendarService extends AbstractService {
     }
     
     public List<Calendar> getAll(Pageable pageable, Sort sort) {
-        List<Calendar> c = pgCCalendarRepository.findAll();
-        return c;
+        List<Calendar> results = pgCCalendarRepository.findAll();
+        List<Calendar> refined = new ArrayList<>();
+        if(results != null) {
+            results.stream().forEach(r -> {
+                Calendar calendar = new Calendar();
+                DTOMapper.INSTANCE.copyCalendarIgnoreEvents(r,calendar);
+                refined.add(calendar);
+            });
+        }
+        return refined;
     }
 
     public Calendar getByUuid(UUID uuid) {
