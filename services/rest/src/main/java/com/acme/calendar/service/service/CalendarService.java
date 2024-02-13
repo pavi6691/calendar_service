@@ -1,5 +1,6 @@
 package com.acme.calendar.service.service;
 
+import com.acme.calendar.core.enums.CalendarAPIError;
 import com.acme.calendar.core.util.LogUtil;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.collections.Collection;
@@ -12,10 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.acme.calendar.service.utils.ExceptionUtil.throwRestError;
 
 @Slf4j
 @Service
@@ -38,6 +42,11 @@ public class CalendarService extends AbstractService {
             calendar.setUuid(calendar.getUuid());
         } else {
             calendar.setUuid(UUID.randomUUID());
+        }
+        if(calendar.getCreatedInitially() == null) {
+            ZonedDateTime zonedDateTime = ZonedDateTime.now();
+            calendar.setCreatedInitially(zonedDateTime);
+            calendar.setLastUpdatedTime(zonedDateTime);
         }
         AtomicReference<Collection> nested = new AtomicReference<>();
         if(calendar.getMappings() != null) {
@@ -86,6 +95,17 @@ public class CalendarService extends AbstractService {
 
     public Calendar update(Calendar cCalendar) {
         log.debug("{}", LogUtil.method());
+        if(cCalendar.getLastUpdatedTime() == null) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_NO_MODIFIED_DATE);
+        }
+        Calendar calendar = pgCCalendarRepository.findById(cCalendar.getUuid()).orElse(null);
+        if(calendar == null) {
+            throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, cCalendar.getUuid());
+        }
+        if(!calendar.getLastUpdatedTime().equals(cCalendar.getLastUpdatedTime())) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, calendar.getLastUpdatedTime());
+        }
+        cCalendar.setLastUpdatedTime(ZonedDateTime.now());
         return pgCCalendarRepository.save(cCalendar);
     }
 

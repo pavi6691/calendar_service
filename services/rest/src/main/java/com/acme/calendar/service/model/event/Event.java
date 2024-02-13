@@ -1,12 +1,17 @@
 package com.acme.calendar.service.model.event;
 import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.serialzation.CustomDateDeserializer;
+import com.acme.calendar.service.serialzation.CustomDateSerializer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -30,6 +35,8 @@ public class Event {
     ZonedDateTime startTime;
     @Column(nullable = false)
     ZonedDateTime endTime;
+    ZonedDateTime createdInitially;
+    ZonedDateTime lastUpdatedTime;
     @Column(columnDefinition = "TEXT")
     String rrule;
 

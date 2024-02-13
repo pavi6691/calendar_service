@@ -24,6 +24,8 @@ public class CalendarAPIErrorTest {
     void testAllEnums() {
         Arrays.stream(CalendarAPIError.values()).forEach(calendarAPIError -> {
             String result = switch (calendarAPIError) {
+                case ERROR_ENTRY_HAS_NO_MODIFIED_DATE -> null;
+                case ERROR_ENTRY_HAS_BEEN_MODIFIED -> null;
                 case ERROR_CLIENT_REQUEST,
                         ERROR_PARSING_TIMESTAMP,
                         ERROR_NOT_EXISTS_UUID,

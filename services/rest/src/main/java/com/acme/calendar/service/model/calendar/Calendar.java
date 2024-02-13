@@ -1,10 +1,15 @@
 package com.acme.calendar.service.model.calendar;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.event.Event;
+import com.acme.calendar.service.serialzation.CustomDateDeserializer;
+import com.acme.calendar.service.serialzation.CustomDateSerializer;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Getter
@@ -26,6 +31,8 @@ public class Calendar implements IEntry<Calendar> {
         String title;
         @Column(nullable = false)
         String description;
+        ZonedDateTime createdInitially;
+        ZonedDateTime lastUpdatedTime;
         
         @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JsonManagedReference(value="event-mapping")

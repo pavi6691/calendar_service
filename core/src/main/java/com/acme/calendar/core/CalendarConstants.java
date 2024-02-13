@@ -2,7 +2,8 @@ package com.acme.calendar.core;
 
 
 public class CalendarConstants {
-
+    // Timestamps
+    public static final String TIMESTAMP_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX";
 
     /*
      * REST endpoints - query parameters

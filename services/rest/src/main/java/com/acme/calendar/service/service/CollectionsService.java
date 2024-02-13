@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,6 +65,11 @@ public class CollectionsService extends AbstractService {
             collection.setUuid(collection.getUuid());   
         } else {
             collection.setUuid(UUID.randomUUID());
+        }
+        if(collection.getCreatedInitially() == null) {
+            ZonedDateTime zonedDateTime = ZonedDateTime.now();
+            collection.setCreatedInitially(zonedDateTime);
+            collection.setLastUpdatedTime(zonedDateTime);
         }
         AtomicReference<Collection> nested = new AtomicReference<>();
         if(collection.getCollectionMappings() != null) {
@@ -118,9 +124,7 @@ public class CollectionsService extends AbstractService {
             return;
         }
         filter.add(collection.getUuid());
-        restCollection.setUuid(collection.getUuid());
-        restCollection.setTitle(collection.getTitle());
-        restCollection.setDescription(collection.getDescription());
+        DTOMapper.INSTANCE.copy(collection,restCollection);
         Object[] collectionEntries = restCollection.getCollection(collection.getCalendarMapping().size() + collection.getCollectionMappings().size());
         collection.getCalendarMapping().stream().forEach(c -> {
             c.getCalendar().setType(CALENDAR);
@@ -137,9 +141,15 @@ public class CollectionsService extends AbstractService {
     @Transactional
     public void update(Collection updateCollectionRequests) {
         log.debug("{}", LogUtil.method());
+        if(updateCollectionRequests.getLastUpdatedTime() == null) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_NO_MODIFIED_DATE);
+        }
         Collection existingCollection = entityManager.find(Collection.class,updateCollectionRequests.getUuid());
         if(existingCollection == null) {
             throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, updateCollectionRequests.getUuid());
+        }
+        if(!existingCollection.getLastUpdatedTime().equals(updateCollectionRequests.getLastUpdatedTime())) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingCollection.getLastUpdatedTime());
         }
         // Copy existing mappings and orders into temporary maps
         Map<UUID, CollectionMapping> orphanCollections = existingCollection.getCollectionMappings().stream().collect(
@@ -185,20 +195,23 @@ public class CollectionsService extends AbstractService {
             filterDuplicateJustInCaseFromFrontEnd.add(updateCollectionRequest.getUuid());
             if(updateCollectionRequest instanceof Calendar) {
                 Calendar calendarRequest = (Calendar) updateCollectionRequest;
-                CalendarMapping calendarMapping;
+                CalendarMapping existingCalendarMapping;
                 if(orphanCalendar != null && orphanCalendar.containsKey(calendarRequest.getUuid())) {
-                    calendarMapping = orphanCalendar.get(calendarRequest.getUuid());
-                    calendarRequest.setUuid(calendarMapping.getCalendar().getUuid());
-                    DTOMapper.INSTANCE.copy(calendarRequest,calendarMapping.getCalendar());
-                    calendarMapping.setChildOrder(order.get());
+                    existingCalendarMapping = orphanCalendar.get(calendarRequest.getUuid());
+                    calendarRequest.setUuid(existingCalendarMapping.getCalendar().getUuid());
+                    if(!existingCalendarMapping.getCalendar().getLastUpdatedTime().equals(calendarRequest.getLastUpdatedTime())) {
+                        throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingCalendarMapping.getCalendar().getLastUpdatedTime());
+                    }
+                    DTOMapper.INSTANCE.copy(calendarRequest,existingCalendarMapping.getCalendar());
+                    existingCalendarMapping.setChildOrder(order.get());
                 } else {
                     if(calendarRequest.getUuid() == null)
                         calendarRequest.setUuid(UUID.randomUUID());
-                    calendarMapping = CalendarMapping.builder()
+                    existingCalendarMapping = CalendarMapping.builder()
                             .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(calendarRequest.getUuid()).build())
                             .calendar(calendarRequest).parent(existingCollection).childOrder(order.get()).build();
                 }
-                existingCollection.getCalendarMapping().add(calendarMapping);
+                existingCollection.getCalendarMapping().add(existingCalendarMapping);
                 orphanCalendar.remove(calendarRequest.getUuid());
             } else if(updateCollectionRequest instanceof Collection) {
                 Collection collectionRequest = (Collection) updateCollectionRequest;
@@ -206,6 +219,9 @@ public class CollectionsService extends AbstractService {
                 if(orphanCollections != null && orphanCollections.containsKey(collectionRequest.getUuid())) {
                     existingChildCollection = orphanCollections.get(collectionRequest.getUuid());
                     collectionRequest.setUuid(existingChildCollection.getChild().getUuid());
+                    if(!existingChildCollection.getChild().getLastUpdatedTime().equals(collectionRequest.getLastUpdatedTime())) {
+                        throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingChildCollection.getChild().getLastUpdatedTime());
+                    }
                     DTOMapper.INSTANCE.copy(collectionRequest,existingChildCollection.getChild());
                     existingChildCollection.setChildOrder(order.get());
                 } else {
@@ -218,6 +234,7 @@ public class CollectionsService extends AbstractService {
             }
             order.getAndIncrement();
         });
+        existingCollection.setLastUpdatedTime(ZonedDateTime.now());
     }
     
     private void itemsToMapping(Collection existingCollection,Collection collection,AtomicInteger order) {

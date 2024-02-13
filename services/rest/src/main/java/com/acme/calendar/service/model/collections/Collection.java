@@ -2,10 +2,15 @@ package com.acme.calendar.service.model.collections;
 
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
+import com.acme.calendar.service.serialzation.CustomDateDeserializer;
+import com.acme.calendar.service.serialzation.CustomDateSerializer;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Table(name = "collections")
@@ -26,6 +31,8 @@ public class Collection implements IEntry<Collection> {
         UUID uuid;
         String title;
         String description;
+        ZonedDateTime createdInitially;
+        ZonedDateTime lastUpdatedTime;
         
         @Transient
         IEntry[] items;
