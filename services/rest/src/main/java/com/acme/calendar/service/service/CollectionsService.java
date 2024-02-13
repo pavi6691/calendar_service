@@ -59,8 +59,8 @@ public class CollectionsService extends AbstractService {
             collection.setUuid(UUID.randomUUID());
         }
         AtomicReference<Collection> nested = new AtomicReference<>();
-        if(collection.getMappings() != null) {
-            collection.getMappings().stream().forEach(pc -> {
+        if(collection.getCollectionMappings() != null) {
+            collection.getCollectionMappings().stream().forEach(pc -> {
                 if(pc.getParent() != null) {
                     nested.set(pgCSetRepository.findById(pc.getParent().getUuid()).orElse(null));
                     if(nested.get() == null) {
@@ -70,11 +70,11 @@ public class CollectionsService extends AbstractService {
                         pc.setChildOrder(getOrder(pc.getParent().getUuid()));
                     }
                     pc.setChild(collection);
-                    nested.get().getMappings().add(pc);
+                    nested.get().getCollectionMappings().add(pc);
                 }
             });
         }
-        if(nested.get() != null && !nested.get().getMappings().isEmpty()) {
+        if(nested.get() != null && !nested.get().getCollectionMappings().isEmpty()) {
             pgCSetRepository.save(nested.get());   
         } else {
             pgCSetRepository.save(collection);
@@ -111,38 +111,18 @@ public class CollectionsService extends AbstractService {
         restCollection.setUuid(collection.getUuid());
         restCollection.setTitle(collection.getTitle());
         restCollection.setDescription(collection.getDescription());
-        Object[] collectionEntries = restCollection.getCollection(collection.getCalendarMapping().size() + collection.getMappings().size());
+        Object[] collectionEntries = restCollection.getCollection(collection.getCalendarMapping().size() + collection.getCollectionMappings().size());
         collection.getCalendarMapping().stream().forEach(c -> {
             c.getCalendar().setType(CALENDAR);
             collectionEntries[c.getChildOrder()] = c.getCalendar(); 
         });
-        for (CollectionMapping pc : collection.getMappings()) {
+        for (CollectionMapping pc : collection.getCollectionMappings()) {
             Collection nestedCollection = Collection.builder().type(COLLECTION).uuid(collection.getUuid())
                     .title(collection.getTitle()).description(collection.getDescription()).build();
             collectionEntries[pc.getChildOrder()] = nestedCollection;
             process(pc.getChild(),nestedCollection,filter);
         }
     }
-
-//    private Map<String,Map<UUID,Object>> getAllItemsFor(Collection collection) {
-//        if(collection == null) {
-//            return;
-//        }
-//        Map<String,Map<UUID,Object>> items = new HashMap<>();
-//        RestCollection restCollection = new RestCollection();
-//        restCollection.setUuid(collection.getUuid());
-//        restCollection.setTitle(collection.getTitle());
-//        restCollection.setDescription(collection.getDescription());
-//        for (Calendar c : collection.getCalendar()) {
-//            c.setType(CALENDAR);
-//            items.putIfAbsent(CALENDAR,new HashMap<>()).put(c.getUuid(),c);
-//        }
-//        for (CollectionMapping pc : collection.getParentChildOrders()) {
-//            RestCollection nestedCollection = RestCollection.builder().type(COLLECTION).uuid(collection.getUuid())
-//                    .title(collection.getTitle()).description(collection.getDescription()).build();
-//            items.putIfAbsent(COLLECTION,new HashMap<>()).put(nestedCollection.getUuid(),nestedCollection);
-//        }
-//    }
     
     @Transactional
     public void update(Collection updateCollectionRequests) {
@@ -151,34 +131,38 @@ public class CollectionsService extends AbstractService {
             return;
         }
         // Copy existing mappings and orders into temporary maps
-        Map<UUID, CollectionMapping> collectionMapping = existingCollection.getMappings().stream().collect(
+        Map<UUID, CollectionMapping> orphanCollections = existingCollection.getCollectionMappings().stream().collect(
                 Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
-        Map<UUID,CalendarMapping> calendarMapping = existingCollection.getCalendarMapping().stream()
+        Map<UUID,CalendarMapping> orphanCalendar = existingCollection.getCalendarMapping().stream()
                 .collect(Collectors.toMap(co -> co.getCalendar().getUuid(), Function.identity()));
         
         DTOMapper.INSTANCE.copy(updateCollectionRequests,existingCollection);
         
         // provision updates
-        update(existingCollection,updateCollectionRequests,collectionMapping,calendarMapping);
+        update(existingCollection,updateCollectionRequests,orphanCollections,orphanCalendar);
+        
+        existingCollection.getCollectionMappings().removeAll(orphanCollections.values());
+        
+        existingCollection.getCalendarMapping().removeAll(orphanCalendar.values());
+        
+        // Update existing and new collections
+        pgCollectionMappingRepo.saveAll(existingCollection.getCollectionMappings());
 
         // Remove orphaned collection mappings
-        existingCollection.getMappings().removeAll(collectionMapping.values());
+        pgCollectionMappingRepo.deleteAll(orphanCollections.values());
+
+        // Update existing and new calendars
+        pgCalendarMappingRepo.saveAll(existingCollection.getCalendarMapping());
 
         // Remove orphaned calendar mappings
-        existingCollection.getCalendarMapping().removeAll(calendarMapping.values());
-        
-        pgCollectionMappingRepo.saveAll(existingCollection.getMappings());
-        pgCollectionMappingRepo.deleteAll(collectionMapping.values());
-
-        pgCalendarMappingRepo.saveAll(existingCollection.getCalendarMapping());
-        pgCalendarMappingRepo.deleteAll(calendarMapping.values());
+        pgCalendarMappingRepo.deleteAll(orphanCalendar.values());
     }
 
     
     private void update(Collection existingCollection,
                         Collection updateCollectionRequests,
-                        Map<UUID, CollectionMapping> collectionMapping,
-                        Map<UUID,CalendarMapping> calenderMapping) {
+                        Map<UUID, CollectionMapping> orphanCollections,
+                        Map<UUID,CalendarMapping> orphanCalendar) {
         if(updateCollectionRequests.getItems() == null) {
             return;
         }
@@ -190,8 +174,8 @@ public class CollectionsService extends AbstractService {
             if(updateCollectionRequest instanceof Calendar) {
                 Calendar calendarRequest = (Calendar) updateCollectionRequest;
                 CalendarMapping calendarMapping;
-                if(calenderMapping != null && calenderMapping.containsKey(calendarRequest.getUuid())) {
-                    calendarMapping = calenderMapping.get(calendarRequest.getUuid());
+                if(orphanCalendar != null && orphanCalendar.containsKey(calendarRequest.getUuid())) {
+                    calendarMapping = orphanCalendar.get(calendarRequest.getUuid());
                     calendarRequest.setUuid(calendarMapping.getCalendar().getUuid());
                     DTOMapper.INSTANCE.copy(calendarRequest,calendarMapping.getCalendar());
                     calendarMapping.setChildOrder(order.get());
@@ -203,12 +187,12 @@ public class CollectionsService extends AbstractService {
                             .calendar(calendarRequest).parent(existingCollection).childOrder(order.get()).build();
                 }
                 existingCollection.getCalendarMapping().add(calendarMapping);
-                calenderMapping.remove(calendarRequest.getUuid());
+                orphanCalendar.remove(calendarRequest.getUuid());
             } else if(updateCollectionRequest instanceof Collection) {
                 Collection collectionRequest = (Collection) updateCollectionRequest;
                 CollectionMapping existingChildCollection;
-                if(collectionMapping != null && collectionMapping.containsKey(collectionRequest.getUuid())) {
-                    existingChildCollection = collectionMapping.get(collectionRequest.getUuid());
+                if(orphanCollections != null && orphanCollections.containsKey(collectionRequest.getUuid())) {
+                    existingChildCollection = orphanCollections.get(collectionRequest.getUuid());
                     collectionRequest.setUuid(existingChildCollection.getChild().getUuid());
                     DTOMapper.INSTANCE.copy(collectionRequest,existingChildCollection.getChild());
                     existingChildCollection.setChildOrder(order.get());
@@ -217,8 +201,8 @@ public class CollectionsService extends AbstractService {
                         collectionRequest.setUuid(UUID.randomUUID());
                     existingChildCollection = get(existingCollection,collectionRequest,order);
                 }
-                existingCollection.getMappings().add(existingChildCollection);
-                collectionMapping.remove(collectionRequest.getUuid());
+                existingCollection.getCollectionMappings().add(existingChildCollection);
+                orphanCollections.remove(collectionRequest.getUuid());
             }
             order.getAndIncrement();
         });
@@ -236,7 +220,7 @@ public class CollectionsService extends AbstractService {
                     Collection collectionItem = (Collection) item;
                     if(collectionItem.getUuid() == null)
                         collectionItem.setUuid(UUID.randomUUID());
-                    existingCollection.getMappings().add(get(collection, collectionItem, order));
+                    existingCollection.getCollectionMappings().add(get(collection, collectionItem, order));
                     itemsToMapping(collection,collectionItem,order);
                 }
             });

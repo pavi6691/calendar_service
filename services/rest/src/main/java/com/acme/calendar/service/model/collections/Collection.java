@@ -42,7 +42,7 @@ public class Collection implements IEntry<Collection> {
         @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
         @OrderBy("childOrder ASC")
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-        private Set<CollectionMapping> mappings = new HashSet<>();
+        private Set<CollectionMapping> collectionMappings = new HashSet<>();
 
         @Override
         public boolean equals(Object o) {
