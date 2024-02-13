@@ -1,5 +1,7 @@
 package com.acme.calendar.service.service;
 
+import com.acme.calendar.core.enums.CalendarAPIError;
+import com.acme.calendar.core.util.LogUtil;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.model.calendar.Calendar;
@@ -13,6 +15,7 @@ import com.acme.calendar.service.repository.PGCollectionsRepository;
 import com.acme.calendar.service.utils.DTOMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +28,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.acme.calendar.service.utils.ExceptionUtil.throwRestError;
 
+
+@Slf4j
 @Service
 public class CollectionsService extends AbstractService {
 
@@ -53,6 +59,7 @@ public class CollectionsService extends AbstractService {
 
 
     public Collection create(Collection collection) {
+        log.debug("{}", LogUtil.method());
         if(collection.getUuid() != null) {
             collection.setUuid(collection.getUuid());   
         } else {
@@ -83,6 +90,7 @@ public class CollectionsService extends AbstractService {
     }
     
     public List<Collection> getAll(Pageable pageable, Sort sort) {
+        log.debug("{}", LogUtil.method());
         Set<UUID> filterChildren = new HashSet<>();
         return pgCSetRepository.findAll().stream()
                 .filter(collection -> collection != null && !filterChildren.contains(collection.getUuid()))
@@ -94,9 +102,10 @@ public class CollectionsService extends AbstractService {
     }
 
     public Collection getByUuid(UUID uuid) {
+        log.debug("{}", LogUtil.method());
         Collection collection = pgCSetRepository.findById(uuid).orElse(null);
         if(collection == null) {
-            return null;
+            throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, uuid);
         }
         Collection restCollection = new Collection();
         process(collection, restCollection, new HashSet<>());
@@ -104,6 +113,7 @@ public class CollectionsService extends AbstractService {
     }
     
     private void process(Collection collection,Collection restCollection,Set<UUID> filter) {
+        log.debug("{}", LogUtil.method());
         if(collection == null) {
             return;
         }
@@ -126,9 +136,10 @@ public class CollectionsService extends AbstractService {
     
     @Transactional
     public void update(Collection updateCollectionRequests) {
+        log.debug("{}", LogUtil.method());
         Collection existingCollection = entityManager.find(Collection.class,updateCollectionRequests.getUuid());
         if(existingCollection == null) {
-            return;
+            throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, updateCollectionRequests.getUuid());
         }
         // Copy existing mappings and orders into temporary maps
         Map<UUID, CollectionMapping> orphanCollections = existingCollection.getCollectionMappings().stream().collect(
@@ -163,6 +174,7 @@ public class CollectionsService extends AbstractService {
                         Collection updateCollectionRequests,
                         Map<UUID, CollectionMapping> orphanCollections,
                         Map<UUID,CalendarMapping> orphanCalendar) {
+        log.debug("{}", LogUtil.method());
         if(updateCollectionRequests.getItems() == null) {
             return;
         }
@@ -209,6 +221,7 @@ public class CollectionsService extends AbstractService {
     }
     
     private void itemsToMapping(Collection existingCollection,Collection collection,AtomicInteger order) {
+        log.debug("{}", LogUtil.method());
         if(collection.getItems() != null) {
             Arrays.stream(collection.getItems()).forEach(item -> {
                 if (item instanceof Calendar) {
@@ -228,22 +241,26 @@ public class CollectionsService extends AbstractService {
     }
     
     private CalendarMapping get(Collection existingCollection, Calendar calendar, AtomicInteger order) {
+        log.debug("{}", LogUtil.method());
         return CalendarMapping.builder()
                 .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(calendar.getUuid()).build())
                 .parent(existingCollection).calendar(calendar).childOrder(order.get()).build();
     }
 
     private CollectionMapping get(Collection existingCollection, Collection collection, AtomicInteger order) {
+        log.debug("{}", LogUtil.method());
         return CollectionMapping.builder()
                 .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(collection.getUuid()).build())
                 .parent(existingCollection).child(collection).childOrder(order.get()).build();
     }
 
     public void delete(List<UUID> cSets) {
+        log.debug("{}", LogUtil.method());
         pgCSetRepository.deleteAllById(cSets);
     }
 
     public List<Event> findEventsByCollectionId(UUID collectionId) {
+        log.debug("{}", LogUtil.method());
         return entityManager.createQuery(
                         "SELECT e FROM Event e " +
                                 "JOIN e.calendar c " +
@@ -254,6 +271,7 @@ public class CollectionsService extends AbstractService {
     }
 
     public String[] getCollectionAndCalendarUuids(UUID collectionId) {
+        log.debug("{}", LogUtil.method());
         String queryString = "SELECT e.collectionAndCalendarUuids FROM collection e WHERE e.uuid = :collectionId";
         return entityManager.createQuery(queryString, String[].class)
                 .setParameter("collectionId", collectionId)
@@ -261,6 +279,7 @@ public class CollectionsService extends AbstractService {
     }
 
     public Map<UUID, Collection> getNestedEntities(String[] collectionAndCalendarUuids) {
+        log.debug("{}", LogUtil.method());
         String queryString = "SELECT n FROM collection n WHERE n.uuid IN :collectionAndCalendarUuids";
         return entityManager.createQuery(queryString, Collection.class)
                 .setParameter("nestedUuids", collectionAndCalendarUuids)
@@ -268,6 +287,7 @@ public class CollectionsService extends AbstractService {
     }
 
     public Map<UUID, Calendar> getCalendarEntities(String[] collectionAndCalendarUuids) {
+        log.debug("{}", LogUtil.method());
         String queryString = "SELECT n FROM calendar n WHERE n.uuid IN :collectionAndCalendarUuids";
         return entityManager.createQuery(queryString, Calendar.class)
                 .setParameter("nestedUuids", collectionAndCalendarUuids)
