@@ -7,6 +7,8 @@ import com.acme.calendar.service.model.collections.CollectionMapping;
 import com.acme.calendar.service.model.collections.MappingPK;
 import com.acme.calendar.service.model.event.Event;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
+import com.acme.calendar.service.repository.PGCalendarMappingRepo;
+import com.acme.calendar.service.repository.PGCollectionMappingRepo;
 import com.acme.calendar.service.repository.PGCollectionsRepository;
 import com.acme.calendar.service.utils.DTOMapper;
 import jakarta.persistence.EntityManager;
@@ -30,6 +32,9 @@ public class CollectionsService extends AbstractService {
     PGCollectionsRepository pgCSetRepository;
     
     PGCCalendarRepository pgcCalendarRepository;
+
+    PGCollectionMappingRepo pgCollectionMappingRepo;
+    PGCalendarMappingRepo pgCalendarMappingRepo;
     
     @PersistenceContext
     EntityManager entityManager;
@@ -38,9 +43,12 @@ public class CollectionsService extends AbstractService {
     private static final String COLLECTION = "collection";
 
     @Autowired
-    public CollectionsService(PGCollectionsRepository pgCSetRepository,PGCCalendarRepository pgcCalendarRepository) {
+    public CollectionsService(PGCollectionsRepository pgCSetRepository,PGCCalendarRepository pgcCalendarRepository,
+                              PGCollectionMappingRepo pgCollectionMappingRepo,PGCalendarMappingRepo pgCalendarMappingRepo) {
         this.pgCSetRepository = pgCSetRepository;
         this.pgcCalendarRepository = pgcCalendarRepository;
+        this.pgCollectionMappingRepo = pgCollectionMappingRepo;
+        this.pgCalendarMappingRepo = pgCalendarMappingRepo;
     }
 
 
@@ -152,23 +160,18 @@ public class CollectionsService extends AbstractService {
         
         // provision updates
         update(existingCollection,updateCollectionRequests,collectionMapping,calendarMapping);
-        
-        // save results to db
-        saveToDb(existingCollection,collectionMapping,calendarMapping);
-    }
 
-    private void saveToDb(Collection existingCollection,
-                          Map<UUID, CollectionMapping> collectionsToDelete,
-                          Map<UUID, CalendarMapping> calendarsToDelete) {
-
-        // Remove orphaned collection orders
-        existingCollection.getMappings().removeAll(collectionsToDelete.values());
+        // Remove orphaned collection mappings
+        existingCollection.getMappings().removeAll(collectionMapping.values());
 
         // Remove orphaned calendar mappings
-        existingCollection.getCalendarMapping().removeAll(calendarsToDelete.values());
+        existingCollection.getCalendarMapping().removeAll(calendarMapping.values());
         
-        // Save the updated collection
-        entityManager.merge(existingCollection);
+        pgCollectionMappingRepo.saveAll(existingCollection.getMappings());
+        pgCollectionMappingRepo.deleteAll(collectionMapping.values());
+
+        pgCalendarMappingRepo.saveAll(existingCollection.getCalendarMapping());
+        pgCalendarMappingRepo.deleteAll(calendarMapping.values());
     }
 
     
@@ -214,20 +217,30 @@ public class CollectionsService extends AbstractService {
                         collectionRequest.setUuid(UUID.randomUUID());
                     existingChildCollection = get(existingCollection,collectionRequest,order);
                 }
-                if(collectionRequest.getItems() != null) {
-                    Arrays.stream(collectionRequest.getItems()).forEach(item -> {
-                        if (item instanceof Calendar) {
-                            existingChildCollection.getChild().getCalendarMapping().add(get(collectionRequest, (Calendar) item, order));
-                        } else if (item instanceof Collection) {
-                            existingChildCollection.getChild().getMappings().add(get(collectionRequest, (Collection) item, order));
-                        }
-                    });
-                }
                 existingCollection.getMappings().add(existingChildCollection);
                 collectionMapping.remove(collectionRequest.getUuid());
             }
             order.getAndIncrement();
         });
+    }
+    
+    private void itemsToMapping(Collection existingCollection,Collection collection,AtomicInteger order) {
+        if(collection.getItems() != null) {
+            Arrays.stream(collection.getItems()).forEach(item -> {
+                if (item instanceof Calendar) {
+                    Calendar calendar = (Calendar) item;
+                    if(calendar.getUuid() == null)
+                        calendar.setUuid(UUID.randomUUID());
+                    existingCollection.getCalendarMapping().add(get(collection, calendar, order));
+                } else if (item instanceof Collection) {
+                    Collection collectionItem = (Collection) item;
+                    if(collectionItem.getUuid() == null)
+                        collectionItem.setUuid(UUID.randomUUID());
+                    existingCollection.getMappings().add(get(collection, collectionItem, order));
+                    itemsToMapping(collection,collectionItem,order);
+                }
+            });
+        }
     }
     
     private CalendarMapping get(Collection existingCollection, Calendar calendar, AtomicInteger order) {

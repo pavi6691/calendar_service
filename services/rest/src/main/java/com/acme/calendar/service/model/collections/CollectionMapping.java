@@ -26,7 +26,7 @@ public class CollectionMapping {
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.MERGE)
     @MapsId("childId")
     private Collection child;
 

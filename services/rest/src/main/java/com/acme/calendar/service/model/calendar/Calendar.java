@@ -27,11 +27,11 @@ public class Calendar implements IEntry<Calendar> {
         @Column(nullable = false)
         String description;
         
-        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JsonManagedReference(value="event-mapping")
         List<Event> events;
 
-        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
         @OrderBy("childOrder ASC")
         @JsonManagedReference(value="calendar-mapping")
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

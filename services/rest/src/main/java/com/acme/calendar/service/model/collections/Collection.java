@@ -34,12 +34,12 @@ public class Collection implements IEntry<Collection> {
             return items;
         }
 
-        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
         @OrderBy("childOrder ASC")
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private Set<CalendarMapping> calendarMapping = new HashSet<>();
         
-        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
         @OrderBy("childOrder ASC")
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private Set<CollectionMapping> mappings = new HashSet<>();
