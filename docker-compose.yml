@@ -3,6 +3,7 @@ version: "3.0"
 services:
   
   calendar-service:
+    container_name: calendar-service
     build:
       context: .
       dockerfile: Dockerfile

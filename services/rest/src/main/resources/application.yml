@@ -4,7 +4,7 @@
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 spring:
   datasource:
-    url: jdbc:postgresql://localhost/acme
+    url: jdbc:postgresql://postgresql/acme
     username: postgresql-username
     password: postgresql-password
     driverClassName: org.postgresql.Driver
@@ -28,3 +28,6 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false
+## Application configurations  
+server:
+  port: 8001
