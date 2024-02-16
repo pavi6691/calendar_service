@@ -139,7 +139,7 @@ public class CollectionsService extends AbstractService {
     }
     
     @Transactional
-    public void update(Collection updateCollectionRequests) {
+    public void update(Collection updateCollectionRequests) {    // TODO Does not update `lastUpdatedTime` to current time
         log.debug("{}", LogUtil.method());
         if(updateCollectionRequests.getLastUpdatedTime() == null) {
             throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_NO_MODIFIED_DATE);
