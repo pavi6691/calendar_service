@@ -2,6 +2,27 @@
 
 
 
+## Docker build
+
+Use one of the following commands to build the Docker image:
+
+- ```shell
+  docker build --no-cache --progress=plain .
+  ```
+- ```shell
+  docker build .
+  ```
+
+Use one of the following commands to run bootstrap application and database etc.:
+
+- ```shell
+  docker compose --progress=plain up
+  ```
+- ```shell
+  docker compose up
+  ```
+
+
 ## GraalVM native support
 
 This project has been configured to let you generate either a lightweight container or a native executable.
