@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.acme.calendar.service.utils.ExceptionUtil.newRestError;
 import static com.acme.calendar.service.utils.ExceptionUtil.throwRestError;
 
 @Slf4j
@@ -93,20 +94,21 @@ public class CalendarService extends AbstractService {
         return pgCCalendarRepository.findById(uuid).orElse(null);
     }
 
-    public Calendar update(Calendar cCalendar) {
+    public Calendar update(Calendar updatedCalendar) throws Exception {
         log.debug("{}", LogUtil.method());
-        if(cCalendar.getLastUpdatedTime() == null) {
+        if(updatedCalendar.getLastUpdatedTime() == null) {
             throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_NO_MODIFIED_DATE);
         }
-        Calendar calendar = pgCCalendarRepository.findById(cCalendar.getUuid()).orElse(null);
-        if(calendar == null) {
-            throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, cCalendar.getUuid());
+        Calendar existingCalendar = pgCCalendarRepository
+                .findById(updatedCalendar.getUuid())
+                .orElseThrow(() -> newRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, updatedCalendar.getUuid()));
+        if(!existingCalendar.getLastUpdatedTime().equals(updatedCalendar.getLastUpdatedTime())) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingCalendar.getLastUpdatedTime());
         }
-        if(!calendar.getLastUpdatedTime().equals(cCalendar.getLastUpdatedTime())) {
-            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, calendar.getLastUpdatedTime());
-        }
-        cCalendar.setLastUpdatedTime(ZonedDateTime.now());
-        return pgCCalendarRepository.save(cCalendar);
+        existingCalendar.setTitle(updatedCalendar.getTitle());
+        existingCalendar.setDescription(updatedCalendar.getDescription());
+        existingCalendar.setLastUpdatedTime(ZonedDateTime.now());
+        return pgCCalendarRepository.save(existingCalendar);
     }
 
     public void delete(List<UUID> cCalendars) {

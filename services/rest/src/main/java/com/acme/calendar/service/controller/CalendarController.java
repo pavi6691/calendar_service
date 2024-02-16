@@ -42,7 +42,7 @@ public class CalendarController {
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Calendar> update(@RequestBody Calendar calendar) {
+    public ResponseEntity<Calendar> update(@RequestBody Calendar calendar) throws Exception {
         return ResponseEntity.ok(service.update(calendar));
     }
 
