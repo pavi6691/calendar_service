@@ -1,0 +1,484 @@
+{
+	"info": {
+		"_postman_id": "437faff1-96d6-42d2-9112-613eb9a1e385",
+		"name": "Calendar Service",
+		"description": "In order to switch between localhost and server deployment tests, choose the appropriate `HOST` variable.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3162988"
+	},
+	"item": [
+		{
+			"name": "/api/v1/calendars",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"calendar\",\n  \"title\": \"Sample Calendar 1\",\n  \"description\": \"Sample Calendar Description 1\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ (create in collection)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"calendar\",\n  \"title\": \"Sample Calendar 1\",\n  \"description\": \"Sample Calendar Description 1\",\n\n  // Below collection deatils to add this entity in collection\n  \"collection\": {\n    \"type\": \"collection\",\n    \"uuid\": \"575e5f0b-3f45-4f40-a358-e32f4c16a17e\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/{uuid}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars/6ed4ba3f-eabe-4a4e-a542-dded92ccfdeb",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars",
+								"6ed4ba3f-eabe-4a4e-a542-dded92ccfdeb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"calendar\",\n    \"uuid\": \"6ed4ba3f-eabe-4a4e-a542-dded92ccfdeb\",\n    \"title\": \"Sample Calendar 1 (revision 2)\",\n    \"description\": \"Sample Calendar Description 1 (revision 2)\",\n    \"lastUpdatedTime\": \"2024-02-16T12:31:36.723917Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    \"f8e902d4-641b-40da-8793-c34cd853a9e6\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/calendars",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"calendars"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/api/v1/events",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Sample Event Title 1\",\n  \"description\": \"Sample Event Description\",\n  \"startTime\": \"2024-01-30T10:15:30+01:00\",\n  \"endTime\": \"2024-01-30T12:15:30+01:00\",\n  \"rrule\": \"Sample RRULE\",\n  \"calendar\": {\n    \"type\": \"calendar\",\n    \"uuid\": \"717e29cd-7032-46a4-b2d9-05bd652e28f8\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/events",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/events",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/{uuid}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/events/879a0081-df8c-4914-9dbb-2d1eff0467e3",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"879a0081-df8c-4914-9dbb-2d1eff0467e3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"879a0081-df8c-4914-9dbb-2d1eff0467e3\",\n    \"title\": \"Sample Event Title 1 (revision 2)\",\n    \"description\": \"Sample Event Description (revision 2)\",\n    \"startTime\": \"2024-01-30T09:15:30Z\",\n    \"endTime\": \"2024-01-30T11:15:30Z\",\n    \"createdInitially\": \"2024-02-16T12:47:38.129239Z\",\n    \"lastUpdatedTime\": \"2024-02-16T12:47:38.129239Z\",\n    \"rrule\": \"Sample RRULE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/events",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    \"879a0081-df8c-4914-9dbb-2d1eff0467e3\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/events",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/api/v1/collections",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"collection\",\n  \"title\": \"Sample collection 1\",\n  \"description\": \"Sample collection Description 1\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"collection\",\n  \"title\": \"Sample collection 1\",\n  \"description\": \"Sample collection Description 1\",\n\n  // Below block is to add this entity as childs, so provide parent details\n  \"mappings\": [\n    {\n        \"parent\": {\n            \"type\":\"collection\",\n            \"uuid\":\"0b442850-7f8d-463e-9341-c503c791e362\"\n        }\n    }\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/{uuid}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections/dd9c2c7d-93c8-4102-9567-adc78ef5127b",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections",
+								"dd9c2c7d-93c8-4102-9567-adc78ef5127b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"collection\",\n    \"uuid\": \"dd9c2c7d-93c8-4102-9567-adc78ef5127b\",\n    \"title\": \"Sample collection 1 (revision 2)\",\n    \"description\": \"Sample collection Description 1 (revision 2)\",\n    \"createdInitially\": \"2024-02-16T12:53:57.606222Z\",\n    \"lastUpdatedTime\": \"2024-02-16T12:53:57.606222Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    \"20167db5-f882-42d0-8f77-0169e166928a\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/collections",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost:8001",
+			"type": "string"
+		},
+		{
+			"key": "HOST",
+			"value": "http://88.99.248.68:8001",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
