@@ -36,7 +36,7 @@ public class EventController {
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Event> getByUuid(UUID uuid) {
+    public ResponseEntity<Event> getByUuid(@PathVariable UUID uuid) {
         return ResponseEntity.ok(service.getByUuid(uuid));
     }
 
