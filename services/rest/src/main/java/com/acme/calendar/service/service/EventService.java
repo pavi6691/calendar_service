@@ -41,7 +41,7 @@ public class EventService {
             event.setLastUpdatedTime(zonedDateTime);
         }
         event.setUuid(UUID.randomUUID());
-        return pgCEventRepository.save(event);
+        return pgCEventRepository.save(event);                  // TODO Fix EntityNotFoundException exceptions thrown when provided calendar uuid does not exist; currently throws stacktrace to client (which should never happen!)
     }
     
     public List<Event> getAll(Pageable pageable, Sort sort) {
