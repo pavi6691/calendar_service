@@ -24,14 +24,14 @@ public class CalendarAPIErrorTest {
     void testAllEnums() {
         Arrays.stream(CalendarAPIError.values()).forEach(calendarAPIError -> {
             String result = switch (calendarAPIError) {
-                case ERROR_ENTRY_HAS_NO_MODIFIED_DATE -> null;
-                case ERROR_ENTRY_HAS_BEEN_MODIFIED -> null;
-                case ERROR_CLIENT_REQUEST,
-                        ERROR_PARSING_TIMESTAMP,
-                        ERROR_NOT_EXISTS_UUID,
-                        ERROR_NOT_FOUND,
-                        ERROR_SERVER,
-                        ERROR_SOFT_DELETED -> {
+                case ERROR_ENTRY_HAS_NO_MODIFIED_DATE,
+                     ERROR_ENTRY_HAS_BEEN_MODIFIED,
+                     ERROR_CLIENT_REQUEST,
+                     ERROR_PARSING_TIMESTAMP,
+                     ERROR_NOT_EXISTS_UUID,
+                     ERROR_NOT_FOUND,
+                     ERROR_SERVER,
+                     ERROR_SOFT_DELETED -> {
                     String s = String.format("Checking: %s (%s, %s, \"%s\")", calendarAPIError.name(), calendarAPIError.httpStatusCode(), calendarAPIError.errorCode(), calendarAPIError.errorMessage());
                     System.out.println(s);
                     assertTrue(Arrays.stream(VALID_HTTP_STATUS_CODES).anyMatch(i -> i == calendarAPIError.httpStatusCode()), () -> String.format("httpStatusCode: %s is not between valid values", calendarAPIError.httpStatusCode()));
