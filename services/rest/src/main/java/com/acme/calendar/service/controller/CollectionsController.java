@@ -2,8 +2,6 @@ package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
 import com.acme.calendar.service.model.collections.Collection;
-import com.acme.calendar.service.model.rest.request.UpdateCollectionRequest;
-import com.acme.calendar.service.model.rest.response.RestCollection;
 import com.acme.calendar.service.service.CollectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -30,24 +28,24 @@ public class CollectionsController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestCollection> create(@RequestBody Collection collection) {
+    public ResponseEntity<Collection> create(@RequestBody Collection collection) {
         return ResponseEntity.ok(service.create(collection));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_ALL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<RestCollection>> getAll(Pageable pageable, Sort sort) {
+    public ResponseEntity<List<Collection>> getAll(Pageable pageable, Sort sort) {
         return ResponseEntity.ok(service.getAll(pageable,sort));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_BY_UUID, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestCollection> getByUuid(@PathVariable(name = API_PATH_COLLECTION_UUID) UUID uuid) {
+    public ResponseEntity<Collection> getByUuid(@PathVariable(name = API_PATH_COLLECTION_UUID) UUID uuid) {
         return ResponseEntity.ok(service.getByUuid(uuid));
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestCollection> update(@PathVariable(name = API_PATH_COLLECTION_UUID) UUID uuid, @RequestBody UpdateCollectionRequest updateCollectionRequest) {
-        service.update(uuid, updateCollectionRequest);
-        return ResponseEntity.ok(service.getByUuid(uuid));
+    public ResponseEntity<Collection> update(@RequestBody Collection updateCollectionRequest) {
+        service.update(updateCollectionRequest);
+        return ResponseEntity.ok(service.getByUuid(updateCollectionRequest.getUuid()));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

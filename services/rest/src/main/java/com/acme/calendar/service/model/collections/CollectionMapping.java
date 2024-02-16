@@ -3,8 +3,10 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
-@Table(name = "collection_order")
+@Table(name = "collection_mapping")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,19 +14,19 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionOrder {
+public class CollectionMapping {
     
     @EmbeddedId
-    private CollectionOrderPK id = new CollectionOrderPK();
+    private MappingPK id = new MappingPK();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("parentId")
     @JsonBackReference
     @JoinColumn(name = "parent_id")
     private Collection parent;
 
     @JoinColumn(name = "child_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.MERGE)
     @MapsId("childId")
     private Collection child;
 
@@ -32,4 +34,15 @@ public class CollectionOrder {
     @JsonIgnore
     private int childOrder = -1;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CollectionMapping that)) return false;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

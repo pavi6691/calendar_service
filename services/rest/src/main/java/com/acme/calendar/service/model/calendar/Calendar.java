@@ -1,13 +1,16 @@
 package com.acme.calendar.service.model.calendar;
 import com.acme.calendar.service.model.IEntry;
-import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.model.event.Event;
+import com.acme.calendar.service.serialzation.CustomDateDeserializer;
+import com.acme.calendar.service.serialzation.CustomDateSerializer;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+
+import java.time.ZonedDateTime;
+import java.util.*;
 
 @Getter
 @Setter
@@ -19,6 +22,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Calendar implements IEntry<Calendar> {
+        @Transient
         String type = "calendar";
         @Id
         @Column(name = "guid", nullable = false)
@@ -27,29 +31,16 @@ public class Calendar implements IEntry<Calendar> {
         String title;
         @Column(nullable = false)
         String description;
+        ZonedDateTime createdInitially;
+        ZonedDateTime lastUpdatedTime;
         
-        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-        @JsonManagedReference
+        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+        @JsonManagedReference(value="event-mapping")
         List<Event> events;
-        
-        @JoinColumn(name = "collection_guid")
-        @ManyToOne
-        @JsonBackReference
-        Collection collection;
 
-        @Column(name = "order_seq")
-        @JsonIgnore
-        int order;
-
-        @Override
-        public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof Calendar calendar)) return false;
-                return Objects.equals(getUuid(), calendar.getUuid());
-        }
-
-        @Override
-        public int hashCode() {
-                return Objects.hash(getUuid());
-        }
+        @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+        @OrderBy("childOrder ASC")
+        @JsonManagedReference(value="calendar-mapping")
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        private Set<CalendarMapping> mappings = new HashSet<>();
 } 

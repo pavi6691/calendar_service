@@ -1,56 +1,116 @@
 package com.acme.calendar.service.service;
 
+import com.acme.calendar.core.enums.CalendarAPIError;
+import com.acme.calendar.core.util.LogUtil;
 import com.acme.calendar.service.model.calendar.Calendar;
+import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.repository.PGCCalendarRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.acme.calendar.service.repository.PGCollectionsRepository;
+import com.acme.calendar.service.utils.DTOMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.acme.calendar.service.utils.ExceptionUtil.throwRestError;
 
+@Slf4j
 @Service
 public class CalendarService extends AbstractService {
 
+    PGCollectionsRepository pgCSetRepository;
     PGCCalendarRepository pgCCalendarRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
 
 
     @Autowired
-    public CalendarService(PGCCalendarRepository pgCCalendarRepository) {
+    public CalendarService(PGCCalendarRepository pgCCalendarRepository, PGCollectionsRepository pgCSetRepository) {
         this.pgCCalendarRepository = pgCCalendarRepository;
+        this.pgCSetRepository = pgCSetRepository;
     }
 
 
     public Calendar create(Calendar calendar) {
-        calendar.setUuid(UUID.randomUUID());
-        if(calendar.getCollection() != null) {
-            calendar.setOrder(getOrder(calendar.getCollection().getUuid()));
+        log.debug("{}", LogUtil.method());
+        if(calendar.getUuid() != null) {
+            calendar.setUuid(calendar.getUuid());
         } else {
-            calendar.setOrder(0);
+            calendar.setUuid(UUID.randomUUID());
         }
-        return pgCCalendarRepository.save(calendar);
+        if(calendar.getCreatedInitially() == null) {
+            ZonedDateTime zonedDateTime = ZonedDateTime.now();
+            calendar.setCreatedInitially(zonedDateTime);
+            calendar.setLastUpdatedTime(zonedDateTime);
+        }
+        AtomicReference<Collection> nested = new AtomicReference<>();
+        if(calendar.getMappings() != null) {
+            calendar.getMappings().stream().forEach(pc -> {
+                if(pc.getParent() != null) {
+                    if(pc.getParent() != null) {
+                        nested.set(pgCSetRepository.findById(pc.getParent().getUuid()).orElse(null));
+                        if(nested.get() == null) {
+                            return;
+                        }
+                        if(pc.getChildOrder() == -1) {
+                            pc.setChildOrder(getOrder(pc.getParent().getUuid()));
+                        }
+                        pc.setCalendar(calendar);
+                        nested.get().getCalendarMapping().add(pc);
+                    }
+                }
+            });
+        }
+        if(nested.get() != null && !nested.get().getCollectionMappings().isEmpty()) {
+            pgCSetRepository.save(nested.get());
+        } else {
+            pgCCalendarRepository.save(calendar);
+        }
+        return getByUuid(calendar.getUuid());
     }
     
     public List<Calendar> getAll(Pageable pageable, Sort sort) {
-        List<Calendar> c = pgCCalendarRepository.findAll();
-        return c;
+        log.debug("{}", LogUtil.method());
+        List<Calendar> results = pgCCalendarRepository.findAll();
+        List<Calendar> refined = new ArrayList<>();
+        if(results != null) {
+            results.stream().forEach(r -> {
+                Calendar calendar = new Calendar();
+                DTOMapper.INSTANCE.copyCalendarIgnoreEvents(r,calendar);
+                refined.add(calendar);
+            });
+        }
+        return refined;
     }
 
     public Calendar getByUuid(UUID uuid) {
+        log.debug("{}", LogUtil.method());
         return pgCCalendarRepository.findById(uuid).orElse(null);
     }
 
     public Calendar update(Calendar cCalendar) {
+        log.debug("{}", LogUtil.method());
+        if(cCalendar.getLastUpdatedTime() == null) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_NO_MODIFIED_DATE);
+        }
+        Calendar calendar = pgCCalendarRepository.findById(cCalendar.getUuid()).orElse(null);
+        if(calendar == null) {
+            throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, cCalendar.getUuid());
+        }
+        if(!calendar.getLastUpdatedTime().equals(cCalendar.getLastUpdatedTime())) {
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, calendar.getLastUpdatedTime());
+        }
+        cCalendar.setLastUpdatedTime(ZonedDateTime.now());
         return pgCCalendarRepository.save(cCalendar);
     }
 
     public void delete(List<UUID> cCalendars) {
+        log.debug("{}", LogUtil.method());
         pgCCalendarRepository.deleteAllById(cCalendars);
     }
 

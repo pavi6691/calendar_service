@@ -5,12 +5,12 @@ WORKDIR /app/source
 RUN ./mvnw clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Stage 2: Create the final image
-FROM builder
+FROM openjdk:17-slim
 
 VOLUME /tmp
 
 # Copy the packaged JAR file from the build stage
-COPY --from=builder /app/source/target/*.jar /app/app.jar
+COPY --from=builder /app/source/services/rest/target/*.jar /app/app.jar
 # Expose the port the app runs on
 EXPOSE 8001
 
