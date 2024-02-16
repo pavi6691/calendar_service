@@ -30,12 +30,12 @@ public class EventController {
         return ResponseEntity.ok(service.create(event));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_ALL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Event>> getAll(Pageable pageable, Sort sort) {
         return ResponseEntity.ok(service.getAll(pageable,sort));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_BY_UUID, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Event> getByUuid(UUID uuid) {
         return ResponseEntity.ok(service.getByUuid(uuid));
     }

@@ -32,12 +32,12 @@ public class CollectionsController {
         return ResponseEntity.ok(service.create(collection));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_ALL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Collection>> getAll(Pageable pageable, Sort sort) {
         return ResponseEntity.ok(service.getAll(pageable,sort));
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_BY_UUID, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection> getByUuid(@PathVariable(name = API_PATH_COLLECTION_UUID) UUID uuid) {
         return ResponseEntity.ok(service.getByUuid(uuid));
     }
