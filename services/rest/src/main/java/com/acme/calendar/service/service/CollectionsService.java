@@ -2,6 +2,7 @@ package com.acme.calendar.service.service;
 
 import com.acme.calendar.core.enums.CalendarAPIError;
 import com.acme.calendar.core.util.LogUtil;
+import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.model.calendar.Calendar;
@@ -61,16 +62,7 @@ public class CollectionsService extends AbstractService {
 
     public Collection create(Collection collection) {
         log.debug("{}", LogUtil.method());
-        if(collection.getUuid() != null) {
-            collection.setUuid(collection.getUuid());   
-        } else {
-            collection.setUuid(UUID.randomUUID());
-        }
-        if(collection.getCreatedInitially() == null) {
-            ZonedDateTime zonedDateTime = ZonedDateTime.now();
-            collection.setCreatedInitially(zonedDateTime);
-            collection.setLastUpdatedTime(zonedDateTime);
-        }
+        build(collection);
         AtomicReference<Collection> nested = new AtomicReference<>();
         if(collection.getCollectionMappings() != null) {
             collection.getCollectionMappings().stream().forEach(pc -> {
@@ -156,11 +148,23 @@ public class CollectionsService extends AbstractService {
                 Collectors.toMap(co -> co.getChild().getUuid(), Function.identity()));
         Map<UUID,CalendarMapping> orphanCalendar = existingCollection.getCalendarMapping().stream()
                 .collect(Collectors.toMap(co -> co.getCalendar().getUuid(), Function.identity()));
+        ZonedDateTime updatedDateTime = ZonedDateTime.now();
+        if(!existingCollection.equals(updateCollectionRequests) || 
+                updateCollectionRequests.getItems().length != 
+                        (existingCollection.getCollectionMappings().size() + existingCollection.getCalendarMapping().size())) {
+            updateCollectionRequests.setLastUpdatedTime(updatedDateTime);
+        } else {
+            Collection restCollection = new Collection();
+            process(existingCollection, restCollection, new HashSet<>());
+            if(!isOrderSame(updateCollectionRequests.getItems(),restCollection.getItems())) {
+                updateCollectionRequests.setLastUpdatedTime(updatedDateTime);    
+            }
+        }
         
         DTOMapper.INSTANCE.copy(updateCollectionRequests,existingCollection);
         
         // provision updates
-        update(existingCollection,updateCollectionRequests,orphanCollections,orphanCalendar);
+        update(existingCollection,updateCollectionRequests,orphanCollections,orphanCalendar,updatedDateTime);
         
         existingCollection.getCollectionMappings().removeAll(orphanCollections.values());
         
@@ -179,11 +183,20 @@ public class CollectionsService extends AbstractService {
         pgCalendarMappingRepo.deleteAll(orphanCalendar.values());
     }
 
+    private boolean isOrderSame(IEntry[] items1, IEntry[] items2) {
+        for(int i = 0; i <items1.length; i++) {
+            if(items1[i].getUuid() == null || !items1[i].getUuid().equals(items2[i].getUuid())) {
+                return false;
+            }
+        }
+        return true;
+    }
     
     private void update(Collection existingCollection,
                         Collection updateCollectionRequests,
                         Map<UUID, CollectionMapping> orphanCollections,
-                        Map<UUID,CalendarMapping> orphanCalendar) {
+                        Map<UUID,CalendarMapping> orphanCalendar,
+                        ZonedDateTime updatedDateTime) {
         log.debug("{}", LogUtil.method());
         if(updateCollectionRequests.getItems() == null) {
             return;
@@ -202,11 +215,15 @@ public class CollectionsService extends AbstractService {
                     if(!existingCalendarMapping.getCalendar().getLastUpdatedTime().equals(calendarRequest.getLastUpdatedTime())) {
                         throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingCalendarMapping.getCalendar().getLastUpdatedTime());
                     }
+                    if(!calendarRequest.equals(existingCalendarMapping.getCalendar())) {
+                        calendarRequest.setLastUpdatedTime(updatedDateTime);
+                        existingCollection.setLastUpdatedTime(updatedDateTime);
+                    }
                     DTOMapper.INSTANCE.copy(calendarRequest,existingCalendarMapping.getCalendar());
                     existingCalendarMapping.setChildOrder(order.get());
                 } else {
-                    if(calendarRequest.getUuid() == null)
-                        calendarRequest.setUuid(UUID.randomUUID());
+                    build(calendarRequest);
+                    calendarRequest.setLastUpdatedTime(updatedDateTime);
                     existingCalendarMapping = CalendarMapping.builder()
                             .id(MappingPK.builder().parentId(existingCollection.getUuid()).childId(calendarRequest.getUuid()).build())
                             .calendar(calendarRequest).parent(existingCollection).childOrder(order.get()).build();
@@ -222,11 +239,15 @@ public class CollectionsService extends AbstractService {
                     if(!existingChildCollection.getChild().getLastUpdatedTime().equals(collectionRequest.getLastUpdatedTime())) {
                         throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingChildCollection.getChild().getLastUpdatedTime());
                     }
+                    if(!collectionRequest.equals(existingChildCollection.getChild())) {
+                        collectionRequest.setLastUpdatedTime(updatedDateTime);
+                        existingCollection.setLastUpdatedTime(updatedDateTime);
+                    }
                     DTOMapper.INSTANCE.copy(collectionRequest,existingChildCollection.getChild());
                     existingChildCollection.setChildOrder(order.get());
                 } else {
-                    if(collectionRequest.getUuid() == null)
-                        collectionRequest.setUuid(UUID.randomUUID());
+                    build(collectionRequest);
+                    collectionRequest.setLastUpdatedTime(updatedDateTime);
                     existingChildCollection = get(existingCollection,collectionRequest,order);
                 }
                 existingCollection.getCollectionMappings().add(existingChildCollection);
@@ -234,7 +255,6 @@ public class CollectionsService extends AbstractService {
             }
             order.getAndIncrement();
         });
-        existingCollection.setLastUpdatedTime(ZonedDateTime.now());
     }
     
     private void itemsToMapping(Collection existingCollection,Collection collection,AtomicInteger order) {

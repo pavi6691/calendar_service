@@ -1,15 +1,13 @@
 package com.acme.calendar.service.model.collections;
 
+import com.acme.calendar.model.validation.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
-import com.acme.calendar.service.serialzation.CustomDateDeserializer;
-import com.acme.calendar.service.serialzation.CustomDateSerializer;
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -22,12 +20,14 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"items", "calendarMapping","collectionMappings"})
 public class Collection implements IEntry<Collection> {
         
         @Transient
         String type = "collection";
         @Id
         @Column(name = "guid", nullable = false)
+        @NotNull(groups = UpdateValidationGroup.class)
         UUID uuid;
         String title;
         String description;
@@ -50,16 +50,4 @@ public class Collection implements IEntry<Collection> {
         @OrderBy("childOrder ASC")
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private Set<CollectionMapping> collectionMappings = new HashSet<>();
-
-        @Override
-        public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof Collection that)) return false;
-                return Objects.equals(getUuid(), that.getUuid());
-        }
-
-        @Override
-        public int hashCode() {
-                return Objects.hash(getUuid());
-        }
 }

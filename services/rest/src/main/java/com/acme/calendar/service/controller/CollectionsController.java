@@ -1,6 +1,7 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
+import com.acme.calendar.model.validation.UpdateValidationGroup;
 import com.acme.calendar.service.model.collections.Collection;
 import com.acme.calendar.service.service.CollectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +46,7 @@ public class CollectionsController {
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection> update(@RequestBody Collection updateCollectionRequest) {
+    public ResponseEntity<Collection> update(@Validated(UpdateValidationGroup.class) @RequestBody Collection updateCollectionRequest) {
         service.update(updateCollectionRequest);
         return ResponseEntity.ok(service.getByUuid(updateCollectionRequest.getUuid()));
     }

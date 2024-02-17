@@ -39,16 +39,7 @@ public class CalendarService extends AbstractService {
 
     public Calendar create(Calendar calendar) {
         log.debug("{}", LogUtil.method());
-        if(calendar.getUuid() != null) {
-            calendar.setUuid(calendar.getUuid());
-        } else {
-            calendar.setUuid(UUID.randomUUID());
-        }
-        if(calendar.getCreatedInitially() == null) {
-            ZonedDateTime zonedDateTime = ZonedDateTime.now();
-            calendar.setCreatedInitially(zonedDateTime);
-            calendar.setLastUpdatedTime(zonedDateTime);
-        }
+        build(calendar);
         AtomicReference<Collection> nested = new AtomicReference<>();
         if(calendar.getMappings() != null) {
             calendar.getMappings().stream().forEach(pc -> {
@@ -74,7 +65,6 @@ public class CalendarService extends AbstractService {
         }
         return getByUuid(calendar.getUuid());
     }
-    
     public List<Calendar> getAll(Pageable pageable, Sort sort) {
         log.debug("{}", LogUtil.method());
         List<Calendar> results = pgCCalendarRepository.findAll();

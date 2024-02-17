@@ -21,6 +21,7 @@ import java.util.*;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode(exclude = {"events", "mappings"})
 public class Calendar implements IEntry<Calendar> {
         @Transient
         String type = "calendar";
