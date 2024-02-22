@@ -19,6 +19,7 @@ import java.util.UUID;
 import static com.acme.calendar.core.CalendarConstants.API_PATH_COLLECTION_UUID;
 
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = CalendarConstants.API_ENDPOINT_PREFIX + CalendarConstants.API_ENDPOINT_COLLECTIONS)
 public class CollectionsController {

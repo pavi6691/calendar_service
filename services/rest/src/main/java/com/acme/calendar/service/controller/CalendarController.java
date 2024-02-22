@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = CalendarConstants.API_ENDPOINT_PREFIX + CalendarConstants.API_ENDPOINT_CALENDARS)
 public class CalendarController {
