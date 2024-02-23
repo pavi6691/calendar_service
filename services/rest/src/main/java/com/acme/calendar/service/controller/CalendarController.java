@@ -1,7 +1,6 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
-import com.acme.calendar.model.calendar.CCalendar;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = CalendarConstants.API_ENDPOINT_PREFIX + CalendarConstants.API_ENDPOINT_CALENDARS)
 public class CalendarController {
