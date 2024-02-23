@@ -4,13 +4,15 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/v1/**")  // Specify the mapping to enable CORS
-                .allowedOrigins("*")  // Specify the allowed origin(s)
+                .allowedOriginPatterns("*")  // Specify the allowed origin(s)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // Specify the allowed HTTP methods
                 .allowCredentials(true);  // Allow sending cookies from the client
     }
