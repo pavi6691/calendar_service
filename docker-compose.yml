@@ -28,6 +28,33 @@ services:
       - network-calendar-service
     ports:
       - 5432:5432
+  
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:23.0.3
+    command: start-dev
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin@1234
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8080
+      KC_DB: postgres
+      KC_DB_SCHEMA: public
+      KC_DB_USERNAME: postgresql-username
+      KC_DB_PASSWORD: postgresql-password
+      KC_DB_URL: jdbc:postgresql://postgresql/acme
+      #      PROXY_ADDRESS_FORWARDING: 'true' // deploying on vps server
+      KC_PROXY: edge
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HOSTNAME_STRICT: "false"
+    depends_on:
+      - postgresql
+    networks:
+      - network-calendar-service
+
 
 #  # Elasticsearch
 #  elasticsearch:
