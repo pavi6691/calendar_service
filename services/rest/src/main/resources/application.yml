@@ -31,3 +31,41 @@ spring:
 ## Application configurations  
 server:
   port: 8001
+  
+  # Keycloak Configurations
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/calendarService
+          jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
+      client:
+        registration:
+          calendarService: # Keycloak Realm
+            client-name: calender-ui
+            client-id: calender-ui # Keycloak Client
+            client-secret: htGDProqF0tcCijirPPlU4NBjLyYvzPy
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/calender-ui'
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/calendarService
+            user-name-attribute: preferred_username
+          calendarService:
+            authorization-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/token
+            jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
+            user-info-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/userinfo
+            user-name-attribute: sub
+oauth2-issuer: http://localhost:8080/realms/calendarService
+# Used in authorities converter
+oauth2-client-id: calender-ui
+logging:
+  level:
+    org.springframework.security: DEBUG
+springdoc.swagger-ui.operationsSorter: method
+springdoc.swagger-ui.tagsSorter: alpha

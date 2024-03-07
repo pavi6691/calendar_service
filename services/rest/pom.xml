@@ -103,6 +103,13 @@
             <artifactId>ical4j</artifactId>
             <version>3.2.14</version>
         </dependency>
+        
+        <!-- keycloak -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>24.0.1</version>
+        </dependency>
 
         <!-- Developer tools -->
         <dependency>
