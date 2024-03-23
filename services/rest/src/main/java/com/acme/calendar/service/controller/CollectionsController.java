@@ -52,7 +52,7 @@ public class CollectionsController {
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> delete(@RequestBody List<UUID> collectionUuids) {
         service.delete(collectionUuids);
-        return ResponseEntity.ok("Done!");
+        return ResponseEntity.ok("");
     }
 
 }

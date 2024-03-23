@@ -10,7 +10,8 @@ public enum CalendarAPIError {
     ERROR_NOT_FOUND                        (404, 4015, "No entries found"),
     ERROR_SOFT_DELETED                     (404, 4016, "Entry soft deleted"),
     ERROR_ENTRY_HAS_BEEN_MODIFIED          (409, 4020, "Entry recently updated. Please reload, updated on: %s"),
-    ERROR_SERVER                           (500, 5000, "error message: %s");
+    ERROR_SERVER                           (500, 5000, "error message: %s"),
+    ERROR_FETCHING_EVENTS                  (410,4021,"Error Fetching Events: %s");
 
     private final int httpStatusCode;
     private final int errorCode;

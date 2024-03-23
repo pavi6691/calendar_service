@@ -3,10 +3,14 @@ package com.acme.calendar.service.service;
 import com.acme.calendar.core.enums.CalendarAPIError;
 import com.acme.calendar.core.util.LogUtil;
 import com.acme.calendar.service.model.event.Event;
+import com.acme.calendar.service.repository.EventRepository;
 import com.acme.calendar.service.repository.PGCEventRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,6 +30,8 @@ public class EventService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     public EventService(PGCEventRepository pgCEventRepository) {
@@ -76,4 +82,17 @@ public class EventService {
         pgCEventRepository.deleteAllById(cEvents);
     }
 
+    public List<Event> getEventsBetweenDates(UUID calendarGuid, ZonedDateTime startDate, ZonedDateTime endDate) {
+        try {
+            List<Event> events =  eventRepository.findByStartTimeBetweenAndCalendarUuid(startDate, endDate, calendarGuid);
+            if (events.isEmpty()) {
+                log.info("No events present between {} and {} for calendar with GUID {}", startDate, endDate, calendarGuid);
+                return Collections.emptyList();
+            }
+            return events;
+        } catch (Exception e) {
+            throwRestError(CalendarAPIError.ERROR_FETCHING_EVENTS, e.getMessage());
+        }
+        return null;
+    }
 }

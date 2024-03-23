@@ -3,6 +3,7 @@ package com.acme.calendar.service.controller;
 import com.acme.calendar.core.CalendarConstants;
 import com.acme.calendar.service.model.event.Event;
 import com.acme.calendar.service.service.EventService;
+import java.time.ZonedDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,8 @@ import java.util.UUID;
 public class EventController {
 
     EventService service;
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     public EventController(EventService service) {
@@ -48,6 +51,11 @@ public class EventController {
     public ResponseEntity<String> delete(@RequestBody List<UUID> eventsUuids) {
         service.delete(eventsUuids);
         return ResponseEntity.ok("Done!");
+    }
+
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_BETWEEN_TIME, produces = MediaType.APPLICATION_JSON_VALUE )
+    public List<Event> getEventsByCalendarAndDateRange(@RequestParam UUID calendarUuid, @RequestParam  ZonedDateTime startDate, @RequestParam  ZonedDateTime endDate) {
+        return eventService.getEventsBetweenDates(calendarUuid, startDate, endDate);
     }
 
 }

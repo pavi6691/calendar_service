@@ -4,7 +4,7 @@
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 spring:
   datasource:
-    url: jdbc:postgresql://postgresql/acme
+    url: jdbc:postgresql://localhost/acme
     username: postgresql-username
     password: postgresql-password
     driverClassName: org.postgresql.Driver

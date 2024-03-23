@@ -30,6 +30,7 @@ public class CalendarConstants {
 
     public static final String API_ENDPOINT_COLLECTIONS = "/collections";
     public static final String API_ENDPOINT_CALENDARS = "/calendars";
+    public static final String API_ENDPOINT_EVENTS_BETWEEN_TIME = "/between";
     public static final String API_ENDPOINT_EVENTS = "/events";
 
     // /api/v1/devops/...
