@@ -1,10 +1,8 @@
 package com.acme.calendar.service.model.calendar;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.event.Event;
-import com.acme.calendar.service.serialzation.CustomDateDeserializer;
-import com.acme.calendar.service.serialzation.CustomDateSerializer;
+import com.acme.calendar.service.serialzation.ZonedDateTimeSerializer;
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,7 +30,9 @@ public class Calendar implements IEntry<Calendar> {
         String title;
         @Column(nullable = false)
         String description;
+        @JsonSerialize(using = ZonedDateTimeSerializer.class)
         ZonedDateTime createdInitially;
+        @JsonSerialize(using = ZonedDateTimeSerializer.class)
         ZonedDateTime lastUpdatedTime;
         
         @OneToMany(mappedBy = "calendar", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)

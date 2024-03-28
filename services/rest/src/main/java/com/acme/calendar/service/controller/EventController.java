@@ -43,9 +43,9 @@ public class EventController {
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<EventResponse>> getAll(@RequestParam(required = false) UUID calendarUuid,Pageable pageable, Sort sort) {
         if(calendarUuid != null) {
-            return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.findByCalendarUuid(calendarUuid, pageable, sort)));
+            return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponseList(service.findByCalendarUuid(calendarUuid, pageable, sort)));
         }
-        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.getAll(pageable,sort)));
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponseList(service.getAll(pageable,sort)));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,7 +67,7 @@ public class EventController {
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_BETWEEN_TIME, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<EventResponse>> getEventsBetweenDates(@RequestParam UUID calendarUuid, @RequestParam  ZonedDateTime startDate, @RequestParam  ZonedDateTime endDate) {
-        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.getEventsBetweenDates(calendarUuid, startDate, endDate)));
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponseList(service.getEventsBetweenDates(calendarUuid, startDate, endDate)));
     }
 
 }

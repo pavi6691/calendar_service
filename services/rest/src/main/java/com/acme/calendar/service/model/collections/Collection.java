@@ -3,7 +3,9 @@ package com.acme.calendar.service.model.collections;
 import com.acme.calendar.model.validation.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
+import com.acme.calendar.service.serialzation.ZonedDateTimeSerializer;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +33,9 @@ public class Collection implements IEntry<Collection> {
         UUID uuid;
         String title;
         String description;
+        @JsonSerialize(using = ZonedDateTimeSerializer.class)
         ZonedDateTime createdInitially;
+        @JsonSerialize(using = ZonedDateTimeSerializer.class)
         ZonedDateTime lastUpdatedTime;
         
         @Transient
