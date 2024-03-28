@@ -32,6 +32,7 @@ public class CollectionMapping {
 
     @Column(name = "child_order")
     @JsonIgnore
+    @Builder.Default
     private int childOrder = -1;
 
     @Override

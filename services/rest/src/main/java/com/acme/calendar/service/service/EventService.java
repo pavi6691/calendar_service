@@ -6,6 +6,7 @@ import com.acme.calendar.service.model.event.Event;
 import com.acme.calendar.service.repository.EventRepository;
 import com.acme.calendar.service.repository.PGCEventRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -47,7 +49,16 @@ public class EventService {
             event.setLastUpdatedTime(zonedDateTime);
         }
         event.setUuid(UUID.randomUUID());
-        return pgCEventRepository.save(event);                  // TODO Fix EntityNotFoundException exceptions thrown when provided calendar uuid does not exist; currently throws stacktrace to client (which should never happen!)
+        try {
+            return pgCEventRepository.save(event);
+        } catch (Exception e) {
+            if(e instanceof JpaObjectRetrievalFailureException && e.getCause() instanceof EntityNotFoundException) {
+                throwRestError(CalendarAPIError.ERROR_CALENDAR_NOT_FOUND, event.getCalendar().getUuid());
+            } else {
+                throwRestError(CalendarAPIError.INTERNAL_SERVER_ERROR_SERVER, e.getMessage());
+            }
+        }
+        return null;
     }
     
     public List<Event> getAll(Pageable pageable, Sort sort) {
@@ -71,8 +82,9 @@ public class EventService {
             throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, event.getUuid());
         }
         if(!existingEvent.getLastUpdatedTime().equals(event.getLastUpdatedTime())) {
-            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED, existingEvent.getLastUpdatedTime());
+            throwRestError(CalendarAPIError.ERROR_ENTRY_HAS_BEEN_MODIFIED,existingEvent.getUuid(), existingEvent.getLastUpdatedTime());
         }
+        event.setCalendar(existingEvent.getCalendar());
         event.setLastUpdatedTime(ZonedDateTime.now());
         return pgCEventRepository.save(event);
     }

@@ -16,8 +16,8 @@ public class CalendarConstants {
      * REST endpoints - path parameters
      */
 
-    public static final String API_PATH_COLLECTION_UUID = "uuid";
-    public static final String API_PATH_CALENDAR_UUID = "uuid";
+    public static final String API_PATH_COLLECTION_UUID = "collectionUuid";
+    public static final String API_PATH_CALENDAR_UUID = "calendarUuid";
     public static final String API_PATH_EVENT_UUID = "uuid";
 
     /*
@@ -39,13 +39,13 @@ public class CalendarConstants {
     // /api/v1/calendar...
     // POST
     public static final String API_ENDPOINT_COLLECTIONS_CREATE = "";
-    public static final String API_ENDPOINT_CALENDARS_CREATE = "";
-    public static final String API_ENDPOINT_EVENTS_CREATE = "";
+    public static final String API_ENDPOINT_CALENDARS_CREATE = "/" + API_PATH_COLLECTION_UUID + "/{" + API_PATH_COLLECTION_UUID + "}";
+    public static final String API_ENDPOINT_EVENTS_CREATE = "/" + API_PATH_CALENDAR_UUID + "/{" + API_PATH_CALENDAR_UUID + "}";
     // GET
-    public static final String API_ENDPOINT_COLLECTIONS_GET_ALL = "";
-    public static final String API_ENDPOINT_COLLECTIONS_GET_BY_UUID = "/{" + API_PATH_COLLECTION_UUID + "}";
-    public static final String API_ENDPOINT_CALENDARS_GET_ALL = "";
-    public static final String API_ENDPOINT_CALENDARS_GET_BY_UUID = "/{" + API_PATH_CALENDAR_UUID + "}";
+    public static final String API_ENDPOINT_COLLECTIONS_GET_ALL = "/all";
+    public static final String API_ENDPOINT_COLLECTIONS_GET_BY_UUID = "";
+    public static final String API_ENDPOINT_CALENDARS_GET_ALL = "/all";
+    public static final String API_ENDPOINT_CALENDARS_GET_BY_UUID = "";
     public static final String API_ENDPOINT_EVENTS_GET_ALL = "";
     public static final String API_ENDPOINT_EVENTS_GET_BY_UUID = "/{" + API_PATH_EVENT_UUID + "}";
     // PUT
