@@ -24,13 +24,14 @@ public class CalendarAPIErrorTest {
     void testAllEnums() {
         Arrays.stream(CalendarAPIError.values()).forEach(calendarAPIError -> {
             String result = switch (calendarAPIError) {
+                case ERROR_COLLECTION_NOT_FOUND -> null;
+                case ERROR_CALENDAR_NOT_FOUND -> null;
                 case ERROR_ENTRY_HAS_NO_MODIFIED_DATE,
                      ERROR_ENTRY_HAS_BEEN_MODIFIED,
                      ERROR_CLIENT_REQUEST,
                      ERROR_PARSING_TIMESTAMP,
                      ERROR_NOT_EXISTS_UUID,
                      ERROR_NOT_FOUND,
-                     ERROR_SERVER,
                      ERROR_SOFT_DELETED -> {
                     String s = String.format("Checking: %s (%s, %s, \"%s\")", calendarAPIError.name(), calendarAPIError.httpStatusCode(), calendarAPIError.errorCode(), calendarAPIError.errorMessage());
                     System.out.println(s);
@@ -39,6 +40,8 @@ public class CalendarAPIErrorTest {
                     assertNotNull(calendarAPIError.errorMessage(), () -> "Error message can not be null");
                     yield s;
                 }
+                case INTERNAL_SERVER_ERROR_SERVER -> null;
+                case ERROR_FETCHING_EVENTS -> null;
             };
         });
     }
