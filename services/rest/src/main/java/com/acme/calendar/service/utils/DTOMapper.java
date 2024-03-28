@@ -10,10 +10,13 @@ import com.acme.calendar.service.model.rest.payloads.CollectionUpdateRequest;
 import com.acme.calendar.service.model.rest.payloads.EventRequest;
 import com.acme.calendar.service.model.rest.responses.CalendarResponse;
 import com.acme.calendar.service.model.rest.responses.CollectionResponse;
+import com.acme.calendar.service.model.rest.responses.EventResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper
 public interface DTOMapper {
@@ -27,6 +30,8 @@ public interface DTOMapper {
     Collection toEntity(CollectionCreateRequest collectionCreateRequest);
     Collection toEntity(CollectionUpdateRequest collectionUpdateRequest);
     CalendarResponse toCalendarResponseWithEvents(Calendar calendar);
+    EventResponse toEventResponse(Event event);
+    List<EventResponse> toEventResponse(List<Event> events);
     @Mapping(target = "events", ignore = true)
     CalendarResponse toCalendarResponseWithoutEvents(Calendar calendar);
     CollectionResponse toCollectionResponseWithItems(Collection collection);

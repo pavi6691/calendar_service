@@ -13,6 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.SocketTimeoutException;
+import java.util.UUID;
 
 
 @Slf4j
@@ -64,7 +65,13 @@ public class RestExceptionCA {
         if (exception.getCause() instanceof InvalidFormatException) {
             InvalidFormatException invalidFormatException = (InvalidFormatException) exception.getCause();
             FieldValidationException fieldEx = new FieldValidationException(HttpStatus.BAD_REQUEST.name(), "Invalid value in the payload");
-            fieldEx.getFields().put(invalidFormatException.getPath().size() > 0 ?  invalidFormatException.getPath().get(0).getFieldName() : "", invalidFormatException.getValue().toString());
+            String key = "";
+            if(invalidFormatException.getPath().size() > 0 && invalidFormatException.getPath().get(0).getFieldName() != null) {
+                key = invalidFormatException.getPath().get(0).getFieldName();
+            } else if(invalidFormatException.getTargetType() == UUID.class) {
+                key = "UUID";
+            }
+            fieldEx.getFields().put(key, invalidFormatException.getValue().toString());
             log.error("{} {}", LogUtil.method(), fieldEx.getMessage());
             return fieldEx;
         }

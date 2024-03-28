@@ -5,6 +5,7 @@ import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.event.Event;
 import com.acme.calendar.service.model.rest.payloads.EventRequest;
+import com.acme.calendar.service.model.rest.responses.EventResponse;
 import com.acme.calendar.service.service.EventService;
 import java.time.ZonedDateTime;
 
@@ -16,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,37 +34,40 @@ public class EventController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Event> create(@PathVariable UUID calendarUuid, @RequestBody EventRequest eventRequest) {
+    public ResponseEntity<EventResponse> create(@PathVariable UUID calendarUuid, @RequestBody EventRequest eventRequest) {
         Event event = DTOMapper.INSTANCE.toEntity(eventRequest);
         event.setCalendar(Calendar.builder().uuid(calendarUuid).build());
-        return ResponseEntity.ok(service.create(event));
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.create(event)));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Event>> getAll(Pageable pageable, Sort sort) {
-        return ResponseEntity.ok(service.getAll(pageable,sort));
+    public ResponseEntity<List<EventResponse>> getAll(@RequestParam(required = false) UUID calendarUuid,Pageable pageable, Sort sort) {
+        if(calendarUuid != null) {
+            return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.findByCalendarUuid(calendarUuid, pageable, sort)));
+        }
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.getAll(pageable,sort)));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Event> getByUuid(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(service.getByUuid(uuid));
+    public ResponseEntity<EventResponse> getByUuid(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.getByUuid(uuid)));
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Event> update(@RequestBody @Validated(UpdateValidationGroup.class) EventRequest eventRequest) {
+    public ResponseEntity<EventResponse> update(@RequestBody @Validated(UpdateValidationGroup.class) EventRequest eventRequest) {
         Event event = DTOMapper.INSTANCE.toEntity(eventRequest);
-        return ResponseEntity.ok(service.update(event));
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.update(event)));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> delete(@RequestBody List<UUID> eventsUuids) {
         service.delete(eventsUuids);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("Success");
     }
 
-    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_BETWEEN_TIME, produces = MediaType.APPLICATION_JSON_VALUE )
-    public List<Event> getEventsBetweenDates(@RequestParam UUID calendarUuid, @RequestParam  ZonedDateTime startDate, @RequestParam  ZonedDateTime endDate) {
-        return service.getEventsBetweenDates(calendarUuid, startDate, endDate);
+    @GetMapping(path = CalendarConstants.API_ENDPOINT_EVENTS_BETWEEN_TIME, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<EventResponse>> getEventsBetweenDates(@RequestParam UUID calendarUuid, @RequestParam  ZonedDateTime startDate, @RequestParam  ZonedDateTime endDate) {
+        return ResponseEntity.ok(DTOMapper.INSTANCE.toEventResponse(service.getEventsBetweenDates(calendarUuid, startDate, endDate)));
     }
 
 }
