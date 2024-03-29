@@ -1,6 +1,8 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
+import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.calendar.Calendar;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.model.collections.Collection;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -33,7 +36,8 @@ public class CalendarController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalendarResponse> create(@PathVariable UUID collectionUuid, @RequestBody CalendarRequest calendarRequest) {
+    public ResponseEntity<CalendarResponse> create(@PathVariable UUID collectionUuid, 
+                                                   @Validated(CreateValidationGroup.class) @RequestBody CalendarRequest calendarRequest) {
         Calendar calendar = DTOMapper.INSTANCE.toEntity(calendarRequest);
         calendar.setMappings((Set.of(CalendarMapping.builder().parent(Collection.builder().uuid(collectionUuid).build()).build())));
         return ResponseEntity.ok(service.create(calendar));
@@ -50,7 +54,7 @@ public class CalendarController {
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalendarResponse> update(@RequestBody CalendarRequest calendarRequest) throws Exception {
+    public ResponseEntity<CalendarResponse> update(@Validated(UpdateValidationGroup.class) @RequestBody CalendarRequest calendarRequest) throws Exception {
         Calendar calendar = DTOMapper.INSTANCE.toEntity(calendarRequest);
         return ResponseEntity.ok(service.update(calendar));
     }
@@ -60,5 +64,4 @@ public class CalendarController {
         service.delete(calendarsUuids);
         return ResponseEntity.ok("Done!");
     }
-
 }

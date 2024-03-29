@@ -1,6 +1,5 @@
 package com.acme.calendar.service.model.collections;
-
-import com.acme.calendar.model.validation.UpdateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.serialzation.ZonedDateTimeSerializer;

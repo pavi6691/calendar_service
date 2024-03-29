@@ -1,4 +1,5 @@
 package com.acme.calendar.service.model.rest.payloads;
+import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
 import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 
 import javax.validation.constraints.NotNull;
@@ -8,7 +9,7 @@ import java.time.ZonedDateTime;
 public record CalendarRequest (
         @NotNull(groups = UpdateValidationGroup.class)
         UUID uuid,
-        @NotNull(groups = UpdateValidationGroup.class)
+        @NotNull(groups = {CreateValidationGroup.class, UpdateValidationGroup.class})
         String title,
         String description,
         @NotNull(groups = UpdateValidationGroup.class)

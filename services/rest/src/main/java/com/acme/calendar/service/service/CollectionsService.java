@@ -145,12 +145,20 @@ public class CollectionsService extends AbstractService {
         Object[] collectionEntries = restCollection.getCollection(collection.getCalendarMapping().size() + collection.getCollectionMappings().size());
         collection.getCalendarMapping().stream().forEach(c -> {
             c.getCalendar().setType(CALENDAR);
-            collectionEntries[c.getChildOrder()] = c.getCalendar(); 
+            if(c.getChildOrder() >= collectionEntries.length) {
+                collectionEntries[collectionEntries.length-1] = c.getCalendar();
+            } else {
+                collectionEntries[c.getChildOrder()] = c.getCalendar();
+            }
         });
         for (CollectionMapping pc : collection.getCollectionMappings()) {
             Collection nestedCollection = Collection.builder().type(COLLECTION).uuid(collection.getUuid())
                     .title(collection.getTitle()).description(collection.getDescription()).build();
-            collectionEntries[pc.getChildOrder()] = nestedCollection;
+            if(pc.getChildOrder() >= collectionEntries.length) {
+                collectionEntries[collectionEntries.length-1] = nestedCollection;
+            } else {
+                collectionEntries[pc.getChildOrder()] = nestedCollection;
+            }
             process(pc.getChild(),nestedCollection,filter);
         }
     }

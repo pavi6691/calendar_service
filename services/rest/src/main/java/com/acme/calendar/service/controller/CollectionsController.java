@@ -1,10 +1,10 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.CalendarConstants;
-import com.acme.calendar.model.validation.UpdateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.collections.Collection;
-import com.acme.calendar.service.model.rest.payloads.CollectionCreateRequest;
-import com.acme.calendar.service.model.rest.payloads.CollectionUpdateRequest;
+import com.acme.calendar.service.model.rest.payloads.CollectionRequest;
 import com.acme.calendar.service.model.rest.responses.CollectionResponse;
 import com.acme.calendar.service.service.CollectionsService;
 import com.acme.calendar.service.utils.DTOMapper;
@@ -31,7 +31,8 @@ public class CollectionsController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> create(@RequestBody CollectionCreateRequest collectionRequest) {
+    public ResponseEntity<CollectionResponse> create(@Validated(CreateValidationGroup.class) 
+                                                     @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
         return ResponseEntity.ok(service.create(collection));
     }
@@ -51,11 +52,10 @@ public class CollectionsController {
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> update(@Validated(UpdateValidationGroup.class) 
-                                                     @RequestBody CollectionUpdateRequest collectionUpdateRequest) {
-        Collection collection = DTOMapper.INSTANCE.toEntity(collectionUpdateRequest);
+    public ResponseEntity<CollectionResponse> update(@Validated(UpdateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
+        Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
         service.update(collection);
-        return ResponseEntity.ok(service.getByUuid(collectionUpdateRequest.getUuid(),true,false));
+        return ResponseEntity.ok(service.getByUuid(collectionRequest.getUuid(),true,false));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

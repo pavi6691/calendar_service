@@ -6,7 +6,4 @@ public class UserRequest {
     public String lastName;
     public String email;
 
-    public String role;
-    public String group;
-
 }

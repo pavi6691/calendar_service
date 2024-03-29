@@ -1,5 +1,6 @@
 package com.acme.calendar.service.model.rest.payloads;
-import com.acme.calendar.model.validation.UpdateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
+import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +10,12 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 @Setter
 @Getter
-public class CollectionUpdateRequest implements IEntry<CollectionUpdateRequest> {
-        String type = "collection";
+public class CollectionRequest implements IEntry<CollectionRequest> {
+        @NotNull(groups = UpdateValidationGroup.class)
+        String type;
         @NotNull(groups = UpdateValidationGroup.class)
         UUID uuid;
-        @NotNull(groups = UpdateValidationGroup.class)
+        @NotNull(groups = {CreateValidationGroup.class,UpdateValidationGroup.class})
         String title;
         String description;
         @NotNull(groups = UpdateValidationGroup.class)

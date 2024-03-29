@@ -1,11 +1,18 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.KeycloakConstants;
+import com.acme.calendar.service.model.User.GroupRequest;
+import com.acme.calendar.service.model.User.RoleGroupRequest;
+import com.acme.calendar.service.model.User.RoleRequest;
 import com.acme.calendar.service.model.User.UserRequest;
+import com.acme.calendar.service.model.User.UserRoleRequest;
+import com.acme.calendar.service.model.User.UserToGroupRequest;
 import com.acme.calendar.service.service.KeycloakAdmin;
+import com.acme.calendar.service.utils.KeyCloakUtil;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,37 +27,51 @@ public class AuthController {
     }
 
     @PostMapping(path=KeycloakConstants.CREATE_USER,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response createUser(@RequestBody UserRequest userRequest) {
-        return keycloak.createUser(userRequest.username, userRequest.firstName, userRequest.lastName, userRequest.email);
+    public ResponseEntity<ResponseModel> createUser(@RequestBody UserRequest userRequest) {
+        Response response = keycloak.createUser(userRequest.username, userRequest.firstName, userRequest.lastName, userRequest.email);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @PostMapping(path=KeycloakConstants.CREATE_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response createGroup(@RequestBody UserRequest userRequest) {
-        return keycloak.createGroup(userRequest.group);
+    public ResponseEntity<ResponseModel> createGroup(@RequestBody GroupRequest groupRequest) {
+        Response response = keycloak.createGroup(groupRequest.group);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @PostMapping(path=KeycloakConstants.CREATE_ROLE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response createRole(@RequestBody UserRequest userRequest) {
-        return keycloak.createRole(userRequest.role);
+    public ResponseEntity<ResponseModel> createRole(@RequestBody RoleRequest roleRequest) {
+        Response response =  keycloak.createRole(roleRequest.role);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @PostMapping(path=KeycloakConstants.ASSIGN_ROLE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response assignRole(@RequestBody UserRequest userRequest) {
-        return keycloak.assignRoleToUser(userRequest.username,userRequest.role);
+    public ResponseEntity<ResponseModel> assignRole(@RequestBody UserRoleRequest userRoleRequest) {
+        Response response = keycloak.assignRoleToUser(userRoleRequest.username,userRoleRequest.role);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @PostMapping(path=KeycloakConstants.ASSIGN_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response assignGroup(@RequestBody UserRequest userRequest) {
-        return keycloak.assignRoleToGroup(userRequest.role,userRequest.group);
+    public ResponseEntity<ResponseModel> assignGroup(@RequestBody RoleGroupRequest roleGroupRequest) {
+        Response response = keycloak.assignRoleToGroup(roleGroupRequest.role,roleGroupRequest.group);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @PostMapping(path=KeycloakConstants.ADD_USER_TO_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response addUserToGroup(@RequestBody UserRequest userRequest) {
-        return keycloak.addUserToGroup(userRequest.username,userRequest.group);
+    public ResponseEntity<ResponseModel> addUserToGroup(@RequestBody UserToGroupRequest userToGroupRequest) {
+        Response response = keycloak.addUserToGroup(userToGroupRequest.username, userToGroupRequest.group);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 
     @DeleteMapping(path = KeycloakConstants.REVOKE_INVITE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response removeUserRole(@RequestBody UserRequest userRoleRequest) {
-        return keycloak.revokeRoleFromUser(userRoleRequest.username, userRoleRequest.role);
+    public ResponseEntity<ResponseModel> removeUserRole(@RequestBody UserRoleRequest userRoleRequest) {
+        Response response = keycloak.revokeRoleFromUser(userRoleRequest.username, userRoleRequest.role);
+        ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
+        return ResponseEntity.ok(responseModel);
     }
 }

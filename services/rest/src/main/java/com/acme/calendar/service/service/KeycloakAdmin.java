@@ -62,7 +62,7 @@ public class KeycloakAdmin {
             if (response.getStatus() == 201) {
                 return Response.status(Response.Status.CREATED).entity("User created successfully").build();
             } else {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create user. Status code: " + response.getStatus()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create user").build();
             }
         }catch(Exception e){
             throwRestError(KeyCloakAPIError.ERROR_FAILED_TO_CREATE_USER, e.getMessage());
@@ -77,7 +77,7 @@ public class KeycloakAdmin {
         Response response = keycloak.realm(REALM).groups().add(group);
         if (response.getStatus() != 201) {
             log.error("Failed to create group: " + response.getStatusInfo());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create group. Status code: " + response.getStatus()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create group.").build();
         }
         return Response.status(Response.Status.CREATED).entity("Group Created Succesfully").build();
     }
