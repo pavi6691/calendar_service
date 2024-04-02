@@ -2,10 +2,9 @@ package com.acme.calendar.service.model.rest.payloads;
 import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
 import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 @Setter

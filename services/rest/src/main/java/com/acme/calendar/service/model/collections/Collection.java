@@ -1,5 +1,4 @@
 package com.acme.calendar.service.model.collections;
-import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.IEntry;
 import com.acme.calendar.service.model.calendar.CalendarMapping;
 import com.acme.calendar.service.serialzation.ZonedDateTimeSerializer;
@@ -7,8 +6,6 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
-
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -28,7 +25,6 @@ public class Collection implements IEntry<Collection> {
         String type = "collection";
         @Id
         @Column(name = "guid", nullable = false)
-        @NotNull(groups = UpdateValidationGroup.class)
         UUID uuid;
         String title;
         String description;

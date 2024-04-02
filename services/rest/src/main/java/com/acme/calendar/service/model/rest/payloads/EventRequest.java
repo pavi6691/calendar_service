@@ -1,8 +1,8 @@
 package com.acme.calendar.service.model.rest.payloads;
 import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
 import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
