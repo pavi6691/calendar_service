@@ -4,6 +4,8 @@ import com.acme.calendar.core.CalendarConstants;
 import com.acme.calendar.service.exceptions.validations.CreateValidationGroup;
 import com.acme.calendar.service.exceptions.validations.UpdateValidationGroup;
 import com.acme.calendar.service.model.collections.Collection;
+import com.acme.calendar.service.model.collections.CollectionMapping;
+import com.acme.calendar.service.model.collections.MappingPK;
 import com.acme.calendar.service.model.rest.payloads.CollectionRequest;
 import com.acme.calendar.service.model.rest.responses.CollectionResponse;
 import com.acme.calendar.service.service.CollectionsService;
@@ -31,9 +33,14 @@ public class CollectionsController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> create(@Validated(CreateValidationGroup.class) 
-                                                     @RequestBody CollectionRequest collectionRequest) {
+    public ResponseEntity<CollectionResponse> create(@PathVariable(required = false) UUID collectionUuid,
+                            @Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
+        if(collectionUuid != null) {
+            collection.getCollectionMappings()
+                    .add(CollectionMapping.builder().parent(Collection.builder()
+                            .uuid(collectionUuid).build()).build());
+        }
         return ResponseEntity.ok(service.create(collection));
     }
     

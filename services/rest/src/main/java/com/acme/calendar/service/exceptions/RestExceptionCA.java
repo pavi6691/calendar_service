@@ -1,6 +1,8 @@
 package com.acme.calendar.service.exceptions;
 import com.acme.calendar.core.util.LogUtil;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -62,16 +64,20 @@ public class RestExceptionCA {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public BaseRestException handlePayloadFieldMisMatchException(HttpMessageNotReadableException exception) {
-        if (exception.getCause() instanceof InvalidFormatException) {
-            InvalidFormatException invalidFormatException = (InvalidFormatException) exception.getCause();
-            FieldValidationException fieldEx = new FieldValidationException(HttpStatus.BAD_REQUEST.name(), "Invalid value in the payload");
+        if (exception.getCause() instanceof MismatchedInputException) {
+            MismatchedInputException invalidFormatException = (MismatchedInputException) exception.getCause();
+            FieldValidationException fieldEx = new FieldValidationException(HttpStatus.BAD_REQUEST.name(), "Payload field mismatch");
             String key = "";
             if(invalidFormatException.getPath().size() > 0 && invalidFormatException.getPath().get(0).getFieldName() != null) {
                 key = invalidFormatException.getPath().get(0).getFieldName();
             } else if(invalidFormatException.getTargetType() == UUID.class) {
                 key = "UUID";
             }
-            fieldEx.getFields().put(key, invalidFormatException.getValue().toString());
+            if(exception.getCause() instanceof InvalidTypeIdException) {
+                fieldEx.getFields().put(key, exception.getMessage());
+            } else if(exception.getCause() instanceof InvalidFormatException) {
+                fieldEx.getFields().put(key, ((InvalidFormatException)exception.getCause()).getValue().toString());
+            }
             log.error("{} {}", LogUtil.method(), fieldEx.getMessage());
             return fieldEx;
         }

@@ -38,7 +38,7 @@ public class CalendarConstants {
 
     // /api/v1/calendar...
     // POST
-    public static final String API_ENDPOINT_COLLECTIONS_CREATE = "";
+    public static final String API_ENDPOINT_COLLECTIONS_CREATE = "/{" + API_PATH_COLLECTION_UUID + "}";
     public static final String API_ENDPOINT_CALENDARS_CREATE = "/" + API_PATH_COLLECTION_UUID + "/{" + API_PATH_COLLECTION_UUID + "}";
     public static final String API_ENDPOINT_EVENTS_CREATE = "/" + API_PATH_CALENDAR_UUID + "/{" + API_PATH_CALENDAR_UUID + "}";
     // GET
