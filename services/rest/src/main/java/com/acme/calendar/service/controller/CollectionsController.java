@@ -33,6 +33,12 @@ public class CollectionsController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CollectionResponse> create(@Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
+        Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
+        return ResponseEntity.ok(service.create(collection));
+    }
+
+    @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE_CHILD, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CollectionResponse> create(@PathVariable(required = false) UUID collectionUuid,
                             @Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
