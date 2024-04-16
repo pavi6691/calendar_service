@@ -1,7 +1,10 @@
 package com.acme.calendar.service.controller;
 
 import com.acme.calendar.core.KeycloakConstants;
+import com.acme.calendar.core.enums.KeyCloakAPIError;
 import com.acme.calendar.service.model.User.GroupRequest;
+import com.acme.calendar.service.model.User.JwtResponse;
+import com.acme.calendar.service.model.User.LoginRequest;
 import com.acme.calendar.service.model.User.RoleGroupRequest;
 import com.acme.calendar.service.model.User.RoleRequest;
 import com.acme.calendar.service.model.User.UserRequest;
@@ -10,6 +13,7 @@ import com.acme.calendar.service.model.User.UserToGroupRequest;
 import com.acme.calendar.service.service.KeycloakAdmin;
 import com.acme.calendar.service.utils.KeyCloakUtil;
 import jakarta.ws.rs.core.Response;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +32,7 @@ public class AuthController {
 
     @PostMapping(path=KeycloakConstants.CREATE_USER,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> createUser(@RequestBody UserRequest userRequest) {
-        Response response = keycloak.createUser(userRequest.username, userRequest.firstName, userRequest.lastName, userRequest.email);
+        Response response = keycloak.createUser(userRequest.email, userRequest.firstName, userRequest.lastName, userRequest.password);
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
@@ -73,5 +77,17 @@ public class AuthController {
         Response response = keycloak.revokeRoleFromUser(userRoleRequest.username, userRoleRequest.role);
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
+    }
+
+    @PostMapping(path = KeycloakConstants.LOGIN)
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        AccessTokenResponse token = null;
+        try {
+            token = keycloak.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.httpStatusCode()).body(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.errorMessage());
+        }
+        return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }
 }
