@@ -4,7 +4,7 @@
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 spring:
   datasource:
-    url: jdbc:postgresql://postgresql/acme
+    url: jdbc:postgresql://localhost/acme
     username: postgresql-username
     password: postgresql-password
     driverClassName: org.postgresql.Driver
@@ -32,18 +32,18 @@ spring:
 server:
   port: 8001
   
-  # Keycloak Configurations
+  # localhost Configurations
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/calendarService
-          jwk-set-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/calendarService
+          jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
       client:
         registration:
-          calendarService: # Keycloak Realm
+          calendarService: # localhost Realm
             client-name: calender-ui
-            client-id: calender-ui # Keycloak Client
+            client-id: calender-ui # localhost Client
             client-secret: htGDProqF0tcCijirPPlU4NBjLyYvzPy
             authorization-grant-type: authorization_code
             redirect-uri: '{baseUrl}/login/oauth2/code/calender-ui'
@@ -52,16 +52,16 @@ server:
               - profile
               - email
         provider:
-          keycloak:
-            issuer-uri: http://keycloak:8080/realms/calendarService
+          localhost:
+            issuer-uri: http://localhost:8080/realms/calendarService
             user-name-attribute: preferred_username
           calendarService:
-            authorization-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/auth
-            token-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/token
-            jwk-set-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/certs
-            user-info-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/userinfo
+            authorization-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/token
+            jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
+            user-info-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/userinfo
             user-name-attribute: sub
-oauth2-issuer: http://keycloak:8080/realms/calendarService
+oauth2-issuer: http://localhost:8080/realms/calendarService
 # Used in authorities converter
 oauth2-client-id: calender-ui
 logging:
