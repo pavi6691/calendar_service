@@ -17,7 +17,8 @@ public class KeycloakConstants {
     public static final String CREATE_USER = "/createUser";
     public static final String CREATE_GROUP = "/createGroup";
     public static final String CREATE_ROLE = "/createRole";
-    public static final String ASSIGN_ROLE = "/inviteUser";
+    public static final String ASSIGN_ROLE = "/assignRole";
+    public static final String INVITE_USER = "/inviteUser";
     public static final String ASSIGN_GROUP = "/assignGroup";
     public static final String ADD_USER_TO_GROUP = "/addUserToGroup";
     public static final String REVOKE_INVITE = "/roles/remove";

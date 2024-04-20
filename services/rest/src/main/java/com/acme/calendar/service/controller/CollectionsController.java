@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -33,42 +34,42 @@ public class CollectionsController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> create(@Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
+    public ResponseEntity<CollectionResponse> create(Authentication authentication, @Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
-        return ResponseEntity.ok(service.create(collection));
+        return ResponseEntity.ok(service.create(authentication, collection));
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_CREATE_CHILD, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> create(@PathVariable(required = false) UUID collectionUuid,
-                            @Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
+    public ResponseEntity<CollectionResponse> create(Authentication authentication, @PathVariable(required = false) UUID collectionUuid,
+        @Validated(CreateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
         if(collectionUuid != null) {
             collection.getCollectionMappings()
-                    .add(CollectionMapping.builder().parent(Collection.builder()
-                            .uuid(collectionUuid).build()).build());
+                .add(CollectionMapping.builder().parent(Collection.builder()
+                    .uuid(collectionUuid).build()).build());
         }
-        return ResponseEntity.ok(service.create(collection));
+        return ResponseEntity.ok(service.create(authentication, collection));
     }
-    
+
     @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CollectionResponse>> getAll(Pageable pageable, Sort sort,
-                                                           @RequestParam(defaultValue = "false") boolean includeItems,
-                                                           @RequestParam(defaultValue = "false") boolean includeNested) {
-        return ResponseEntity.ok(service.getAll(pageable,sort,includeItems,includeNested));
+    public ResponseEntity<List<CollectionResponse>> getAll( Authentication authentication, Pageable pageable, Sort sort,
+        @RequestParam(defaultValue = "false") boolean includeItems,
+        @RequestParam(defaultValue = "false") boolean includeNested) {
+        return ResponseEntity.ok(service.getAll(authentication, pageable,sort,includeItems,includeNested));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> getByUuid(@RequestParam UUID collectionUuid, 
-                                                        @RequestParam(defaultValue = "false") boolean includeItems,
-                                                        @RequestParam(defaultValue = "false") boolean includeNested) {
-        return ResponseEntity.ok(service.getByUuid(collectionUuid,includeItems,includeNested));
+    public ResponseEntity<CollectionResponse> getByUuid(Authentication authentication, @RequestParam UUID collectionUuid,
+        @RequestParam(defaultValue = "false") boolean includeItems,
+        @RequestParam(defaultValue = "false") boolean includeNested) {
+        return ResponseEntity.ok(service.getByUuid(authentication, collectionUuid,includeItems,includeNested));
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CollectionResponse> update(@Validated(UpdateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
+    public ResponseEntity<CollectionResponse> update(Authentication authentication, @Validated(UpdateValidationGroup.class) @RequestBody CollectionRequest collectionRequest) {
         Collection collection = DTOMapper.INSTANCE.toEntity(collectionRequest);
         service.update(collection);
-        return ResponseEntity.ok(service.getByUuid(collectionRequest.getUuid(),true,false));
+        return ResponseEntity.ok(service.getByUuid(authentication, collectionRequest.getUuid(),true,false));
     }
 
     @DeleteMapping(path = CalendarConstants.API_ENDPOINT_COLLECTIONS_DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

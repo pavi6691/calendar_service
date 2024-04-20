@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,21 +37,21 @@ public class CalendarController {
     }
 
     @PostMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_CREATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalendarResponse> create(@PathVariable UUID collectionUuid, 
-                                                   @Validated(CreateValidationGroup.class) @RequestBody CalendarRequest calendarRequest) {
+    public ResponseEntity<CalendarResponse> create(Authentication authentication, @PathVariable UUID collectionUuid,
+        @Validated(CreateValidationGroup.class) @RequestBody CalendarRequest calendarRequest) {
         Calendar calendar = DTOMapper.INSTANCE.toEntity(calendarRequest);
         calendar.setMappings((Set.of(CalendarMapping.builder().parent(Collection.builder().uuid(collectionUuid).build()).build())));
-        return ResponseEntity.ok(service.create(calendar));
+        return ResponseEntity.ok(service.create(authentication, calendar));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CalendarResponse>> getAll(@RequestParam(defaultValue = "false") boolean includeEvents, Pageable pageable, Sort sort) {
-        return ResponseEntity.ok(service.getAll(pageable,sort,includeEvents));
+    public ResponseEntity<List<CalendarResponse>> getAll(Authentication authentication, @RequestParam(defaultValue = "false") boolean includeEvents, Pageable pageable, Sort sort) {
+        return ResponseEntity.ok(service.getAll(authentication, pageable, sort, includeEvents));
     }
 
     @GetMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_GET_BY_UUID, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalendarResponse> getByUuid(@RequestParam UUID calendarUuid, @RequestParam(defaultValue = "false") boolean includeEvents) {
-        return ResponseEntity.ok(service.getByUuid(calendarUuid,includeEvents));
+    public ResponseEntity<CalendarResponse> getByUuid(Authentication authentication, @RequestParam UUID calendarUuid, @RequestParam(defaultValue = "false") boolean includeEvents) {
+        return ResponseEntity.ok(service.getByUuid(authentication, calendarUuid,includeEvents));
     }
 
     @PutMapping(path = CalendarConstants.API_ENDPOINT_CALENDARS_UPDATE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
