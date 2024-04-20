@@ -47,7 +47,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         // Use NimbusJwtDecoder for example, you should provide proper configuration for your Keycloak server
-        return JwtDecoders.fromIssuerLocation("http://localhost:8080/realms/master");
+        return JwtDecoders.fromIssuerLocation("http://keycloak:8080/realms/master");
     }
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {

@@ -5,7 +5,7 @@ public class KeycloakConstants {
 
     public static final String API_ENDPOINT_KeyCloak = "/auth";
 
-    public static final String SERVER_URL = "http://localhost:8080";
+    public static final String SERVER_URL = "http://keycloak:8080";
     public static final String REALM = "master";
     public static final String ADMIN_USERNAME = "admin";
     public static final String ADMIN_PASSWORD = "admin@1234";
