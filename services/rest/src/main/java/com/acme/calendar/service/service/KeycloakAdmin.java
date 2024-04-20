@@ -1,11 +1,15 @@
 package com.acme.calendar.service.service;
 
+import com.acme.calendar.core.KeycloakConstants;
 import com.acme.calendar.core.enums.KeyCloakAPIError;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.*;
+import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -16,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.acme.calendar.core.KeycloakConstants.*;
+import static com.acme.calendar.core.KeycloakConstants.CLIENT_NAME;
 import static com.acme.calendar.service.utils.ExceptionUtil.throwRestError;
 
 @Slf4j
@@ -33,7 +38,7 @@ public class KeycloakAdmin {
                     .grantType(OAuth2Constants.PASSWORD)
                     .username(ADMIN_USERNAME)
                     .password(ADMIN_PASSWORD)
-                    .clientId(CLIENT_ID)
+                    .clientId(CLIENT_NAME)
                     .clientSecret(CLIENT_SECRET)
                     .build();
         }catch (Exception e){
@@ -47,24 +52,40 @@ public class KeycloakAdmin {
         return user;
     }
 
-    public Response createUser(String username, String firstName, String lastName, String email) {
+    public Response createUser(String email, String firstName, String lastName, String password) {
         try {
-            UserRepresentation user = new UserRepresentation();
-            user.setEnabled(true);
-            user.setUsername(username);
+            if (email == null || email.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Email cannot be null or empty").build();
+            }
+            RealmResource realmResource = this.keycloak.realm(REALM);
+            UsersResource usersResource = realmResource.users();
+            List<UserRepresentation> existingUsers = usersResource.search(email);
+            boolean userExists = !existingUsers.isEmpty();
+            UserRepresentation user = userExists ? existingUsers.get(0) : new UserRepresentation();
+            user.setUsername(email);
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);
-            RealmResource realmResource = this.keycloak.realm(REALM);
-            UsersResource usersResource = realmResource.users();
-            // Create user (requires manage-users role)
-            Response response = usersResource.create(user);
-            if (response.getStatus() == 201) {
-                return Response.status(Response.Status.CREATED).entity("User created successfully").build();
-            } else {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create user").build();
+            user.setEnabled(true);
+
+            if (password != null) {
+                CredentialRepresentation credential = new CredentialRepresentation();
+                credential.setType(CredentialRepresentation.PASSWORD);
+                credential.setValue(password);
+                user.setCredentials(Collections.singletonList(credential));
             }
-        }catch(Exception e){
+            if (userExists) {
+                usersResource.get(user.getId()).update(user);
+                return Response.status(Response.Status.OK).entity("User details updated successfully").build();
+            } else {
+                Response response = usersResource.create(user);
+                if (response.getStatus() == 201) {
+                    return Response.status(Response.Status.CREATED).entity("User created successfully").build();
+                } else {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create user").build();
+                }
+            }
+        } catch (Exception e) {
             throwRestError(KeyCloakAPIError.ERROR_FAILED_TO_CREATE_USER, e.getMessage());
         }
         return null;
@@ -201,6 +222,25 @@ public class KeycloakAdmin {
             throwRestError(KeyCloakAPIError.ERROR_FAILED_TO_REVOKE_INVITE, e.getMessage());
         }
         return null;
+    }
+
+    public AccessTokenResponse authenticate(String email, String password) {
+
+        String serverUrl = KeycloakConstants.SERVER_URL;
+        String realm = KeycloakConstants.REALM;
+        String clientSecret = KeycloakConstants.CLIENT_SECRET;
+
+        Keycloak keycloak = KeycloakBuilder.builder()
+            .serverUrl(serverUrl)
+            .realm(realm)
+            .username(email)
+            .password(password)
+            .clientId(CLIENT_NAME)
+            .clientSecret(clientSecret)
+            .build();
+
+        AccessTokenResponse accessToken = keycloak.tokenManager().getAccessToken();
+        return accessToken;
     }
 
     private static boolean userHasRole(String userId, String roleId) {
