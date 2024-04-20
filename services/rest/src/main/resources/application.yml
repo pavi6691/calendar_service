@@ -4,7 +4,7 @@
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 spring:
   datasource:
-    url: jdbc:postgresql://localhost/acme
+    url: jdbc:postgresql://postgresql/acme
     username: postgresql-username
     password: postgresql-password
     driverClassName: org.postgresql.Driver
@@ -37,8 +37,8 @@ server:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/calendarService
-          jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8080/realms/calendarService
+          jwk-set-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/certs
       client:
         registration:
           calendarService: # localhost Realm
@@ -53,15 +53,15 @@ server:
               - email
         provider:
           localhost:
-            issuer-uri: http://localhost:8080/realms/calendarService
+            issuer-uri: http://keycloak:8080/realms/calendarService
             user-name-attribute: preferred_username
           calendarService:
-            authorization-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/auth
-            token-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/token
-            jwk-set-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/certs
-            user-info-uri: http://localhost:8080/realms/calendarService/protocol/openid-connect/userinfo
+            authorization-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/auth
+            token-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/token
+            jwk-set-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/certs
+            user-info-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/userinfo
             user-name-attribute: sub
-oauth2-issuer: http://localhost:8080/realms/calendarService
+oauth2-issuer: http://keycloak:8080/realms/calendarService
 # Used in authorities converter
 oauth2-client-id: calender-ui
 logging:
