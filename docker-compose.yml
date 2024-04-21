@@ -39,6 +39,8 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin@1234
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key.pem
       PROXY_ADDRESS_FORWARDING: "true"
       KC_HOSTNAME_ADMIN_URL: http://88.99.248.68:8080
       KC_DB: postgres
