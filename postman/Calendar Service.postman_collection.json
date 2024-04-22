@@ -1,0 +1,1051 @@
+{
+	"info": {
+		"_postman_id": "b8c3a478-cee6-43eb-8ca0-c8ee0b93469b",
+		"name": "Calendar Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6524585"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "AssignUserToGroup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"username\":\"Adityab070\",\n   \"group\":\"TestGroup\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/addUserToGroup",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"addUserToGroup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "createUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\":\"praveen@gmail.com\",\n    \"password\": \"praveen\",\n    \"firstName\" : \"Praveen\",\n    \"lastName\" : \"K\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/auth/createUser",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"createUser"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\":\"praveen@gmail.com\",\n    \"password\": \"praveen\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/auth/login",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "InviteUser",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJKRTN6ekJVdkJWbm5FQ2p4TGdQV05DekhfYnlTZ3dpLVZBbWFDWldPQUNZIn0.eyJleHAiOjE3MTM2Mjc4NzYsImlhdCI6MTcxMzYyNzgxNiwianRpIjoiNDI5YTU5MDctNWJhZS00ZWU3LWIwMmUtNTJhNzljODczMzU5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZDg5OTk3ZDItZGRlYy00ODQ2LTg3Y2MtZDVjZTY3YjAxMThhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2FsZW5kZXItdWkiLCJzZXNzaW9uX3N0YXRlIjoiYTYyMWZjMWUtM2YzZC00Y2FmLWIwN2QtZGI2ODVmMjQ4YjAzIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYTYyMWZjMWUtM2YzZC00Y2FmLWIwN2QtZGI2ODVmMjQ4YjAzIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYWJoaSBraGFpd2FsZSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiaGlAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6ImFiaGkiLCJmYW1pbHlfbmFtZSI6ImtoYWl3YWxlIiwiZW1haWwiOiJhYmhpQGdtYWlsLmNvbSJ9.MNOYMZBwJn9QEKix1IMXFjGEwIa_bk_XDnbMVrh8G_OZt6peqQ4pfZ9hT1DoLmcCbwHrjtnLR5v8ncnMcX5QiKWOQhBYqrxJ7ClsP5fS2kqxasMYDcN-yeOtlbDK7d-DmJSBtdg4sWfVHOxA2o4OFGUB-4eERRNltIDPDmGTyowJ6O2ymhlpoQUPug2hSXZDevN9ZZVHClwxr1wbO_F8a9sjHgw_zv5qQ6j7GKsocDJegI_247x4QR56JaLS0AfHP17pebZnODe2EpWnIVd4GBpFy82Z5aSNvp-NV5OYdLpReKkJgIgPI6MXdZBjjENgo7nbvYt2k4-O0oAdA6xxHw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"items\": [\n    {\n      \"userName\": \"praveen@gmail.com\",\n      \"Collection\": [\n        \"e4bfd19b-56c5-4564-99e7-4b91f1b28asdasd\"\n      ]\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/auth/inviteUser",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"inviteUser"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Roles",
+					"item": [
+						{
+							"name": "CreateRole",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0N1hEeTFtNGFpVjlCWEVBU0hKTHZ5VjRrR1hKSmxtVlo5a2JsYkRhdl8wIn0.eyJleHAiOjE3MTEzNjgyNzksImlhdCI6MTcxMTM2NzQ5OSwianRpIjoiMjIyYTA2OTItN2Q2MC00OGYyLThmMjMtMDBlMWI0ZmI5ZmRjIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOlsibWFzdGVyLXJlYWxtIiwiYWNjb3VudCIsIkNhbGVuZGFyLXJlYWxtIl0sInN1YiI6ImU2MjBhNmM5LTExMjctNDhiZi05NzFkLWQ5NmZkODk3MjQ3MSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNhbGVuZGFyIiwic2Vzc2lvbl9zdGF0ZSI6ImI3YTM0OGM2LTdjYjctNDVkZC1hMzYyLWMyMTE5MDdjYjRhNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNyZWF0ZS1yZWFsbSIsImRlZmF1bHQtcm9sZXMtbWFzdGVyIiwib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibWFzdGVyLXJlYWxtIjp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX0sIkNhbGVuZGFyLXJlYWxtIjp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiYjdhMzQ4YzYtN2NiNy00NWRkLWEzNjItYzIxMTkwN2NiNGE1IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiJ9.VB48vCSe3oT0vZpz7WS34ucgessJIDGDvydE6BPA4_Kue5uiyGxWEaOKrQYXgNWnxtvzf1J3GjLE3FfTGRtQjg9UQXuD9UVznDboK9ERWZj4NjyxTZkZFch9isikJr7h6dqjymEp2vb00iWO5Fw-q65eG5nrzXS5tj9RijH9SnulMK-oScSKyrw11IhIdTVSOtTTgRGq4XSuWZz1NlsFm0PgfoQjs69Fw2qiiJ892L3X8ItZtCxyj7_MdlxuILhqMFlkFqJZ5_HUh6eq-xSSawelxzIoPDIcs4N8gVblyNIe6C-PBqrYz0kL1Fr3MjQ0nljcfd5J7KZhPkGiRM0mMQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"role\":\"HoliEventViewRole\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/createRole",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"createRole"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AssignRoleToGroup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"group\":\"Group123\",\n   \"role\":\"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/assignRoleGroup",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"assignRoleGroup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AssignRoleToUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"group\":\"Group123\",\n   \"role\":\"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/assignRoleUser",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"assignRoleUser"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AssignUserToGroup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"username\":\"test123\",\n   \"group\":\"Group123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/addUserToGroup",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"addUserToGroup"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Groups",
+					"item": [
+						{
+							"name": "createGroup",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0N1hEeTFtNGFpVjlCWEVBU0hKTHZ5VjRrR1hKSmxtVlo5a2JsYkRhdl8wIn0.eyJleHAiOjE3MTEzNzA2MTMsImlhdCI6MTcxMTM2OTgzMywianRpIjoiYjMwYTM2MzYtY2I3Yy00ZjRlLWJkNzAtOTc0M2JjMmM0ZTI5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOlsibWFzdGVyLXJlYWxtIiwiYWNjb3VudCIsIkNhbGVuZGFyLXJlYWxtIl0sInN1YiI6ImU2MjBhNmM5LTExMjctNDhiZi05NzFkLWQ5NmZkODk3MjQ3MSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNhbGVuZGFyIiwic2Vzc2lvbl9zdGF0ZSI6IjdiZTVmNGMxLTBlNjktNGExMC05YmQ0LWJkN2YwNzc4MWE1NSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNyZWF0ZS1yZWFsbSIsImRlZmF1bHQtcm9sZXMtbWFzdGVyIiwib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibWFzdGVyLXJlYWxtIjp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX0sIkNhbGVuZGFyLXJlYWxtIjp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiN2JlNWY0YzEtMGU2OS00YTEwLTliZDQtYmQ3ZjA3NzgxYTU1IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiJ9.WBS-qmLMwR_jy_smFgzGO0u92qZXFXGI42s9P1cxk30-PjcJKwL15jpLYFgsMk7VYIiG4mUJdHOT7hFsmC4IiZ92P2WdYmJ55yIOlFRN4UvDwUGwcGqVCttaFtDFr4mAGvMGhAkGb8fwXPySRoxkeJ7msACPOZO_l6jvLmzsPnA3cjmp1hjWppolQ1ek2bTlxr0V8XLOtLYs8b-nOn0NL8QiklPteaKVPZO1jo-XgUmY0ox96d1nKmzjoL8TsNOiIgmxfJtv8QJN-VpRq4Q5ivADlzP0gbrS_uLf9qqMQo3LLjyFe26iAhT6A-b0bVGWmxz2ANaAEsXIGyoEX8Xzmw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"group\" : \"animeGroup\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/keycloak/createGroup",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"keycloak",
+										"createGroup"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "Events",
+					"item": [
+						{
+							"name": "AddEvent",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n  \"title\": \"Testing-1\",\n  \"description\": \"Testing-2\",\n  \"startTime\": \"2024-04-15T10:15:30+01:00\",\n  \"endTime\": \"2024-04-16T00:00:00+01:00\",\n  \"rrule\": \"FREQ=Monthly;BYDAY=Mo,Tu,We,Th,Fr;BYSETPOS=-1;UNTIL=2024-04-15T23:59:59Z\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/events/calendarUuid/98890ec7-9f8a-4575-90dc-1fdc6e6d9b50",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events",
+										"calendarUuid",
+										"98890ec7-9f8a-4575-90dc-1fdc6e6d9b50"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateEvent",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Sample Event Title KKK Don Nr 2\",\n    \"description\": \"Sample Event Description KKK Don Nr 2\",\n    \"startTime\": \"2024-01-30T09:15:30.000000Z\",\n    \"endTime\": \"2024-01-30T11:15:30.000000Z\",\n    \"createdInitially\": \"2024-04-02T02:45:40.308312Z\",\n    \"lastUpdatedTime\": \"2024-04-02T02:45:40.308312Z\",\n    \"rrule\": \"Sample RRULE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/events",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllEvents",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"uuid\": \"631a756b-0b3a-4c51-a00e-fafc550021ed\",\n    \"title\": \"Sample Event Title KKK-1 - DON\",\n    \"description\": \"Sample Event Description KKK-1 - DON\",\n    \"startTime\": 1706606130.000000000,\n    \"endTime\": 1706613330.000000000,\n    \"createdInitially\": 1711361191.955129000,\n    \"lastUpdatedTime\": 1711361191.955129000,\n    \"rrule\": \"Sample RRULE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/events",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetEventsByCalendar",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"uuid\": \"631a756b-0b3a-4c51-a00e-fafc550021ed\",\n    \"title\": \"Sample Event Title KKK-1 - DON\",\n    \"description\": \"Sample Event Description KKK-1 - DON\",\n    \"startTime\": 1706606130.000000000,\n    \"endTime\": 1706613330.000000000,\n    \"createdInitially\": 1711361191.955129000,\n    \"lastUpdatedTime\": 1711361191.955129000,\n    \"rrule\": \"Sample RRULE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/events?calendarUuid=98890ec7-9f8a-4575-90dc-1fdc6e6d9b50",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events"
+									],
+									"query": [
+										{
+											"key": "calendarUuid",
+											"value": "98890ec7-9f8a-4575-90dc-1fdc6e6d9b50"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getEventsBetween",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/events/between?calendarUuid=98890ec7-9f8a-4575-90dc-1fdc6e6d9b50&startDate=2024-04-12T00:00:01Z&endDate=2024-04-13T23:59:59Z",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events",
+										"between"
+									],
+									"query": [
+										{
+											"key": "calendarUuid",
+											"value": "98890ec7-9f8a-4575-90dc-1fdc6e6d9b50"
+										},
+										{
+											"key": "startDate",
+											"value": "2024-04-12T00:00:01Z"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-04-13T23:59:59Z"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteEvent",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"5779426a-c56a-4c46-8485-46af476bca53\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/events",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"events"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Calendars",
+					"item": [
+						{
+							"name": "AddCalendar",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ2ejM3TDNlcXQxWWdZNU15NXFNQjBMTjY3cUdFaU43ZkhrdFRfQmVHci1BIn0.eyJleHAiOjE3MTM3ODE5NjEsImlhdCI6MTcxMzc4MTkwMSwianRpIjoiMzZkNzBjMWQtOTIwOS00NzFhLTlmZTUtMmNkM2U3NDQwNDQ5IiwiaXNzIjoiaHR0cDovLzg4Ljk5LjI0OC42ODo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiMTQ4YzU3OTAtNmFiYy00NDc4LWEzNzYtZjE0MWI3OTI5ZGI1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2FsZW5kYXItdWkiLCJzZXNzaW9uX3N0YXRlIjoiMDdmOTRkYmUtNmQ1OS00YjIxLTlkZjgtNWYyN2QzZmQwYWJkIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiMDdmOTRkYmUtNmQ1OS00YjIxLTlkZjgtNWYyN2QzZmQwYWJkIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYWJoaSBraGFpd2FsZSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiaGlAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6ImFiaGkiLCJmYW1pbHlfbmFtZSI6ImtoYWl3YWxlIiwiZW1haWwiOiJhYmhpQGdtYWlsLmNvbSJ9.qR8WGsJqcggAsu0T4vzskP8SPCqZcBDRTiIPHjo-kSoH1VBaLHa4C1CEupmaA5EUYWISagCgoFAorndZyEgh04LbrywLgZ3SVh6uZ7ImcOuHBU4bpbIy4Rr5LNn_mgcuuGIWtU75P2Zqb8e6QA5YoY0k4hxc3_yyLevTZvo7F7pAS5wGD1ZmH5qtB9SsAmIcLXbq_vcV9TuCRAf_bvjKoc_pTRwnW8D9I_v5LWlGuCu0u3BCQskymlvFnSujYufc7LLEiO58LKcEMCYbjCT_mRYuOqGlwZyFZWWfOcahdJjxH7_GatAXL3PgT630eboxvQZP43i_-gsFOUG8kSpuGg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Testing\",\n  \"description\": \"Testing\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/calendars/collectionUuid/5c3e16e8-01ad-48d0-b30d-44491004f016",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"calendars",
+										"collectionUuid",
+										"5c3e16e8-01ad-48d0-b30d-44491004f016"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCalendar",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"uuid\": \"6364bee3-39ff-41d1-a41a-b12584e3184c\",\n    \"title\": \"Sample Calendar 1-1-2\",\n    \"description\": \"Sample Calendar Description 1-1-2 -- Updated again\",\n    \"createdInitially\": \"2024-02-13T10:51:33.036559Z\",\n    \"lastUpdatedTime\": \"2024-04-02T08:36:14.583942Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/calendars",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"calendars"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllCalendars",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ2ejM3TDNlcXQxWWdZNU15NXFNQjBMTjY3cUdFaU43ZkhrdFRfQmVHci1BIn0.eyJleHAiOjE3MTM3ODE5NjEsImlhdCI6MTcxMzc4MTkwMSwianRpIjoiMzZkNzBjMWQtOTIwOS00NzFhLTlmZTUtMmNkM2U3NDQwNDQ5IiwiaXNzIjoiaHR0cDovLzg4Ljk5LjI0OC42ODo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiMTQ4YzU3OTAtNmFiYy00NDc4LWEzNzYtZjE0MWI3OTI5ZGI1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2FsZW5kYXItdWkiLCJzZXNzaW9uX3N0YXRlIjoiMDdmOTRkYmUtNmQ1OS00YjIxLTlkZjgtNWYyN2QzZmQwYWJkIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiMDdmOTRkYmUtNmQ1OS00YjIxLTlkZjgtNWYyN2QzZmQwYWJkIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYWJoaSBraGFpd2FsZSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiaGlAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6ImFiaGkiLCJmYW1pbHlfbmFtZSI6ImtoYWl3YWxlIiwiZW1haWwiOiJhYmhpQGdtYWlsLmNvbSJ9.qR8WGsJqcggAsu0T4vzskP8SPCqZcBDRTiIPHjo-kSoH1VBaLHa4C1CEupmaA5EUYWISagCgoFAorndZyEgh04LbrywLgZ3SVh6uZ7ImcOuHBU4bpbIy4Rr5LNn_mgcuuGIWtU75P2Zqb8e6QA5YoY0k4hxc3_yyLevTZvo7F7pAS5wGD1ZmH5qtB9SsAmIcLXbq_vcV9TuCRAf_bvjKoc_pTRwnW8D9I_v5LWlGuCu0u3BCQskymlvFnSujYufc7LLEiO58LKcEMCYbjCT_mRYuOqGlwZyFZWWfOcahdJjxH7_GatAXL3PgT630eboxvQZP43i_-gsFOUG8kSpuGg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8001/api/v1/calendars/all?includeEvents=true",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"calendars",
+										"all"
+									],
+									"query": [
+										{
+											"key": "includeEvents",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCalendarByUuid",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/calendars?calendarUuid=6364bee3-39ff-41d1-a41a-b12584e3184c&includeEvents=false",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"calendars"
+									],
+									"query": [
+										{
+											"key": "calendarUuid",
+											"value": "6364bee3-39ff-41d1-a41a-b12584e3184c"
+										},
+										{
+											"key": "includeEvents",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteCalendar",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"b82b7c58-b051-4911-94df-5c16eeac4ebd\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/calendars",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"calendars"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Collections",
+					"item": [
+						{
+							"name": "GetCollectionByUuid",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/collections?collectionUuid=7d24ebce-c409-474c-b385-3e0121e054e3&includeItems=true&includeNested=true ",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections"
+									],
+									"query": [
+										{
+											"key": "collectionUuid",
+											"value": "7d24ebce-c409-474c-b385-3e0121e054e3"
+										},
+										{
+											"key": "includeItems",
+											"value": "true"
+										},
+										{
+											"key": "includeNested",
+											"value": "true "
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddCollection",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ2ejM3TDNlcXQxWWdZNU15NXFNQjBMTjY3cUdFaU43ZkhrdFRfQmVHci1BIn0.eyJleHAiOjE3MTM3ODIzMjYsImlhdCI6MTcxMzc4MjI2NiwianRpIjoiZmIxM2VmMGUtNGViMS00MDNhLTk4MTktMjE4OTQ2ZjQ4N2ZhIiwiaXNzIjoiaHR0cDovLzg4Ljk5LjI0OC42ODo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiMDA5MWU4YzgtYTI2Ny00N2YyLTljYjMtYTNjZGRmN2Y3ZTQ2IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2FsZW5kYXItdWkiLCJzZXNzaW9uX3N0YXRlIjoiZjU3OTIyZWMtNGZkZi00YjhmLTk4Y2EtMmZhNmMzYTJkMThjIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiZjU3OTIyZWMtNGZkZi00YjhmLTk4Y2EtMmZhNmMzYTJkMThjIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUHJhdmVlbiBLIiwicHJlZmVycmVkX3VzZXJuYW1lIjoicHJhdmVlbkBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiUHJhdmVlbiIsImZhbWlseV9uYW1lIjoiSyIsImVtYWlsIjoicHJhdmVlbkBnbWFpbC5jb20ifQ.fSU_UMMzIwSFMTxNSAagykJl1u2KXs7fglqmZr3hImtyemvMlVuV5y1pXv4RUY3s7rBIyYUFaT8ejbdrtMgo5bdHByF4tRtgshuYlvc2OygnOEZcQ7yGdSjeP6_-puhwBGLd3LL6Jg1G2_bhfJbniOr8krgTm4l5S0EgwHMRWrOxtrgoRvgRNU_BzsUraadtapGUt3j3dRlrxTcVfcNZPLKgFSyPDG3LpC5tcbt82CDMtYP11Qfo5WB8JcbsDPdNS06d7sEYFwZOloARfIBI2qpwM6MTEGdaFaFyHQu8e9iPZr0Bx0ZYgjD8sR1cgfqzpnXCqTnMhXyxAmdl5MkLHQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"abhi-1\",\n    \"description\": \"abhi\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/collections",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddChildCollection",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"\",\n    \"description\": \"\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/collections/ae32c355-d7be-45fe-ad78-55cf9c6de4ce",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections",
+										"ae32c355-d7be-45fe-ad78-55cf9c6de4ce"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllCollections",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJKRTN6ekJVdkJWbm5FQ2p4TGdQV05DekhfYnlTZ3dpLVZBbWFDWldPQUNZIn0.eyJleHAiOjE3MTM2Mjc4NDIsImlhdCI6MTcxMzYyNzc4MiwianRpIjoiMWFiYjM3ZjktNTYyMi00M2ZkLTllYjgtOTk0NTVjZDg5NWU0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiYThjMTY4OGYtNTRlMC00OTgwLTk0OGEtZTQ0MjBjYjRiNzAzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2FsZW5kZXItdWkiLCJzZXNzaW9uX3N0YXRlIjoiNjA4MmIxMTAtN2NkMC00NTUzLWEzOWYtYmNhZDY1ZGUxNzAwIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNjA4MmIxMTAtN2NkMC00NTUzLWEzOWYtYmNhZDY1ZGUxNzAwIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUHJhdmVlbiBLYXJhZGkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJwcmF2ZWVuQGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJQcmF2ZWVuIiwiZmFtaWx5X25hbWUiOiJLYXJhZGkiLCJlbWFpbCI6InByYXZlZW5AZ21haWwuY29tIn0.aiB6U_y4WZOpsR40oDTuYbPewqfgX2k4-p554C_afcuN7eRe_u8I-L0kQonMN2ITlA2geifg94buyL5QPLMfDO_sBeCJc9_9w0z6xCCGZx5y-tHvpbuwtiQX-SMIQ8WohAdLlClCPAQKNFr0MSjXcy6WRWa82kc8EHEvzAvsR1HN7yZIj9AdntH_H25lrdY9vzHqB0ytOqgtsDZjMFIJlzcwHpZ5tj8p7szmL7M2exCz320vUS5WNUt2H1DGGP7uhAm6puBTjHJy-D9CNwJoor1E8349-2tZCiTTw5b78mO2wLop5hLylul99Q01GE7zZd_dDvRDt96ZXQrpUNNkcw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "http://localhost:3000",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8001/api/v1/collections/all?includeItems=true&includeNested=true",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections",
+										"all"
+									],
+									"query": [
+										{
+											"key": "includeItems",
+											"value": "true"
+										},
+										{
+											"key": "includeNested",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCollection",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"uuid\": \"7d24ebce-c409-474c-b385-3e0121e054e3\",\n    \"title\": \"Sample collection 1000-1-2-NEW\",\n    \"description\": \"Sample collection Praveen KK DON Nr 1000000000\",\n    \"createdInitially\": \"2024-04-02T08:59:05.374652Z\",\n    \"lastUpdatedTime\": \"2024-04-02T11:06:53.734078Z\",\n    \"items\": [\n        {\n            \"type\": \"collection\",\n            \"uuid\": \"4d84f20f-4584-4755-9cd1-bb76fe4bedc0\",\n            \"title\": \"Sample collection 1000-1-2-NEW -------------------Added - updated\",\n            \"description\": \"Sample collection Description 1000-NEW-1-2\",\n            \"createdInitially\": \"2024-02-13T10:53:20.897548Z\",\n            \"lastUpdatedTime\": \"2024-04-02T09:44:05.221492Z\"\n        },\n        {\n            \"type\": \"calendar\",\n            \"uuid\": \"31db937b-b622-49e8-8370-65e9305bb6aa\",\n            \"title\": \"Sample Calendar KKKKK - Don Nr 2\",\n            \"description\": \"Sample Calendar Description KKKKK - Don Nr 2\",\n            \"createdInitially\": \"2024-04-02T10:43:00.000089Z\",\n            \"lastUpdatedTime\": \"2024-04-02T10:43:00.000089Z\"\n        },\n        {\n            \"type\": \"calendar\",\n            \"uuid\": \"13b1252b-c6df-4988-9004-b6a71c21e064\",\n            \"title\": \"Sample Calendar KKKKK - Don Nr 2\",\n            \"description\": \"Sample Calendar Description KKKKK - Don Nr 2\",\n            \"createdInitially\": \"2024-04-02T10:32:20.937065Z\",\n            \"lastUpdatedTime\": \"2024-04-02T10:32:20.937065Z\"\n        },\n        {\n            \"type\": \"calendar\",\n            \"uuid\": \"0272e9ed-9f30-465a-9402-a9dcdd88486e\",\n            \"title\": \"Sample Calendar KKKKK - Don Nr 2\",\n            \"description\": \"Sample Calendar Description KKKKK - Don Nr 2\",\n            \"createdInitially\": \"2024-04-02T10:32:56.011968Z\",\n            \"lastUpdatedTime\": \"2024-04-02T10:32:56.011968Z\"\n        },\n        {\n            \"type\": \"calendar\",\n            \"uuid\": \"e452e92f-cf0b-4fda-b223-e944a862d79b\",\n            \"title\": \"Sample Calendar KKKKK - Don Nr 2\",\n            \"description\": \"Sample Calendar Description KKKKK - Don Nr 2 -- updated\",\n            \"createdInitially\": \"2024-04-02T10:39:58.310030Z\",\n            \"lastUpdatedTime\": \"2024-04-02T11:06:53.734078Z\"\n        },\n        {\n            \"type\": \"calendar\",\n            \"uuid\": \"90c0f532-dee5-405e-a3b6-4195108775de\",\n            \"title\": \"Sample Calendar KKKKK - Don Nr 2\",\n            \"description\": \"Sample Calendar Description KKKKK - Don Nr 2 -- updated\",\n            \"createdInitially\": \"2024-04-02T10:42:35.256025Z\",\n            \"lastUpdatedTime\": \"2024-04-02T11:06:53.734078Z\"\n        },\n        {\n            \"type\": \"collection\",\n            \"uuid\": \"1855bf90-f505-4119-9b64-5dffabded5fd\",\n            \"title\": \"Sample collection 1000-1-2-NEW -------------------Added  -- updated\",\n            \"description\": \"Sample collection Description 1000-NEW-1-2\",\n            \"createdInitially\": \"2024-04-02T09:44:05.230803Z\",\n            \"lastUpdatedTime\": \"2024-04-02T11:06:53.734078Z\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/collections?collectionUuid=b6f1398a-ad5d-40eb-9c08-df9359312d14&includeItems=true&includeNested=true ",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections"
+									],
+									"query": [
+										{
+											"key": "collectionUuid",
+											"value": "b6f1398a-ad5d-40eb-9c08-df9359312d14"
+										},
+										{
+											"key": "includeItems",
+											"value": "true"
+										},
+										{
+											"key": "includeNested",
+											"value": "true "
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteCollection",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"b6f1398a-ad5d-40eb-9c08-df9359312d14\"\n]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://88.99.248.68:8001/api/v1/collections",
+									"protocol": "http",
+									"host": [
+										"88",
+										"99",
+										"248",
+										"68"
+									],
+									"port": "8001",
+									"path": [
+										"api",
+										"v1",
+										"collections"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

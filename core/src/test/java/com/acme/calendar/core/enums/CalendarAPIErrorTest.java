@@ -41,6 +41,7 @@ public class CalendarAPIErrorTest {
                     yield s;
                 }
                 case INTERNAL_SERVER_ERROR_SERVER -> null;
+                case ERROR_UNAUTHORIZED_ACCESS -> null;
                 case ERROR_FETCHING_EVENTS -> null;
             };
         });

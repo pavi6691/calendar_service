@@ -13,6 +13,7 @@ public enum CalendarAPIError {
     ERROR_NOT_EXISTS_UUID                  (404, 4019, "No entry found for uuid: %s"),
     ERROR_ENTRY_HAS_BEEN_MODIFIED          (409, 4020, "Entry recently updated. Please reload. uuid: %s, updated on: %s"),
     INTERNAL_SERVER_ERROR_SERVER           (500, 5000, "%s"),
+    ERROR_UNAUTHORIZED_ACCESS              (401, 4001, "Unauthorized access detected"),
     ERROR_FETCHING_EVENTS                  (410,4021,"Error Fetching Events: %s");
 
     private final int httpStatusCode;

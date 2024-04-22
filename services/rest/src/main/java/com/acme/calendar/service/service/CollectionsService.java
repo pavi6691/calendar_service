@@ -18,9 +18,12 @@ import com.acme.calendar.service.utils.DTOMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,61 +64,95 @@ public class CollectionsService extends AbstractService {
     }
 
 
-    public CollectionResponse create(Collection collection) {
+    public CollectionResponse create(Authentication authentication, Collection collection) {
         log.debug("{}", LogUtil.method());
         build(collection);
         AtomicReference<Collection> nested = new AtomicReference<>();
-        if(collection.getCollectionMappings() != null) {
+        if (collection.getCollectionMappings() != null) {
             collection.getCollectionMappings().stream().forEach(pc -> {
-                if(pc.getParent() != null) {
+                if (pc.getParent() != null) {
                     nested.set(pgCSetRepository.findById(pc.getParent().getUuid()).orElse(null));
-                    if(nested.get() == null) {
+                    if (nested.get() == null) {
                         return;
                     }
-                    if(pc.getChildOrder() == -1) {
-                        pc.setChildOrder(getOrder(pc.getParent().getUuid()));
+                    if (pc.getChildOrder() == -1) {
+                        pc.setChildOrder(
+                            getOrder(pc.getParent().getUuid()));
                     }
                     pc.setChild(collection);
                     nested.get().getCollectionMappings().add(pc);
                 }
             });
         }
-        if(nested.get() != null && !nested.get().getCollectionMappings().isEmpty()) {
-            pgCSetRepository.save(nested.get());   
+        if (nested.get() != null && !nested.get().getCollectionMappings().isEmpty()) {
+            pgCSetRepository.save(nested.get());
         } else {
             pgCSetRepository.save(collection);
         }
-        return getByUuid(collection.getUuid(),false,false);
-    }
-    
-    public List<CollectionResponse> getAll(Pageable pageable, Sort sort, boolean includeItems,boolean includeNested) {
-        log.debug("{}", LogUtil.method());
-        Set<UUID> filterChildren = new HashSet<>();
-        return pgCSetRepository.findAll().stream()
-                .filter(collection -> collection != null && !filterChildren.contains(collection.getUuid()))
-                .map(collection -> {
-                    Collection restCollection = new Collection();
-                    process(collection,restCollection,filterChildren,includeNested);
-                    if(includeItems) {
-                        return DTOMapper.INSTANCE.toCollectionResponseWithItems(restCollection);
-                    } else {
-                        return DTOMapper.INSTANCE.toCollectionResponseWithoutItems(restCollection);   
-                    }
-                }).collect(Collectors.toList());
+
+        KeycloakAdmin keycloak = new KeycloakAdmin();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getClaim("email");
+        String defaultGroup = "default_" + username.toLowerCase();
+
+        try {
+            keycloak.getGroupDetails(defaultGroup);
+        } catch (GroupNotFoundException e) {
+            keycloak.createGroup(defaultGroup);
+        }
+
+        keycloak.addUserToGroup(username, defaultGroup);
+        keycloak.createResource(collection.getUuid().toString(), defaultGroup);
+        return getByUuid(null, collection.getUuid(), false, false);
     }
 
-    public CollectionResponse getByUuid(UUID uuid, boolean includeItems,boolean includeNested) {
+    public List<CollectionResponse> getAll(Authentication authentication, Pageable pageable, Sort sort, boolean includeItems, boolean includeNested) {
         log.debug("{}", LogUtil.method());
+        KeycloakAdmin keycloak = new KeycloakAdmin();
+        Set<UUID> filterChildren = new HashSet<>();
+        return pgCSetRepository.findAll().stream()
+            .filter(collection -> {
+                boolean access = authentication != null && hasAccessToCollection(authentication, collection);
+                return access && !filterChildren.contains(collection.getUuid());
+            })
+            .map(collection -> {
+                Collection restCollection = new Collection();
+                process(collection, restCollection, filterChildren, includeNested);
+                if (includeItems) {
+                    return DTOMapper.INSTANCE.toCollectionResponseWithItems(restCollection);
+                } else {
+                    return DTOMapper.INSTANCE.toCollectionResponseWithoutItems(restCollection);
+                }
+            }).collect(Collectors.toList());
+    }
+
+    private boolean hasAccessToCollection(Authentication authentication, Collection collection) {
+        KeycloakAdmin keycloak = new KeycloakAdmin();
+        Set<GroupPolicyRepresentation.GroupDefinition> groups = keycloak.getAssociatedGroup(collection.getUuid().toString());
+        for (GroupPolicyRepresentation.GroupDefinition gd : groups) {
+            if (keycloak.isUserInGroup(authentication, gd.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public CollectionResponse getByUuid(Authentication authentication, UUID uuid, boolean includeItems, boolean includeNested) {
+        log.debug("{}", LogUtil.method());
+        KeycloakAdmin keycloak = new KeycloakAdmin();
         Collection collection = pgCSetRepository.findById(uuid).orElse(null);
-        if(collection == null) {
+        if (collection == null) {
             throwRestError(CalendarAPIError.ERROR_NOT_EXISTS_UUID, uuid);
         }
-        Collection restCollection = new Collection();
-        process(collection, restCollection, new HashSet<>(),includeNested);
-        if(includeItems) {
-            return DTOMapper.INSTANCE.toCollectionResponseWithItems(restCollection);   
+        if (authentication != null && !hasAccessToCollection(authentication, collection)) {
+            throwRestError(CalendarAPIError.ERROR_UNAUTHORIZED_ACCESS, uuid);
         }
-        return DTOMapper.INSTANCE.toCollectionResponseWithoutItems(restCollection);
+        Collection restCollection = new Collection();
+        process(collection, restCollection, new HashSet<>(), includeNested);
+
+        return includeItems
+            ? DTOMapper.INSTANCE.toCollectionResponseWithItems(restCollection)
+            : DTOMapper.INSTANCE.toCollectionResponseWithoutItems(restCollection);
     }
 
     private void process(Collection collection,Collection restCollection,Set<UUID> filter, boolean includeNested) {

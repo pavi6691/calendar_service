@@ -32,7 +32,7 @@ spring:
 server:
   port: 8001
   
-  # Keycloak Configurations
+  # localhost Configurations
   security:
     oauth2:
       resourceserver:
@@ -41,9 +41,9 @@ server:
           jwk-set-uri: http://keycloak:8080/realms/calendarService/protocol/openid-connect/certs
       client:
         registration:
-          calendarService: # Keycloak Realm
+          calendarService: # localhost Realm
             client-name: calender-ui
-            client-id: calender-ui # Keycloak Client
+            client-id: calender-ui # localhost Client
             client-secret: htGDProqF0tcCijirPPlU4NBjLyYvzPy
             authorization-grant-type: authorization_code
             redirect-uri: '{baseUrl}/login/oauth2/code/calender-ui'
@@ -52,7 +52,7 @@ server:
               - profile
               - email
         provider:
-          keycloak:
+          localhost:
             issuer-uri: http://keycloak:8080/realms/calendarService
             user-name-attribute: preferred_username
           calendarService:

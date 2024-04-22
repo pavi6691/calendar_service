@@ -39,17 +39,23 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin@1234
-      KC_HOSTNAME_ADMIN_URL: http://localhost:8080
+#      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt.pem
+#      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key.pem
+      PROXY_ADDRESS_FORWARDING: "true"
+      KC_HOSTNAME_ADMIN_URL: http://88.99.248.68:8080
       KC_DB: postgres
       KC_DB_SCHEMA: public
       KC_DB_USERNAME: postgresql-username
       KC_DB_PASSWORD: postgresql-password
-      KC_DB_URL: jdbc:postgresql://postgresql/acme
+      KC_DB_URL: jdbc:postgresql://postgresql/keycloack
       #      PROXY_ADDRESS_FORWARDING: 'true' // deploying on vps server
       KC_PROXY: edge
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT_HTTPS: "false"
       KC_HOSTNAME_STRICT: "false"
+#    volumes:
+#      - /root/server.crt.pem:/opt/keycloak/conf/server.crt.pem
+#      - /root/server.key.pem:/opt/keycloak/conf/server.key.pem
     depends_on:
       - postgresql
     networks:
