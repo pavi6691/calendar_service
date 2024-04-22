@@ -26,11 +26,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(t -> t.disable());
+        final String[] AUTH_WHITELIST = {
+                "/api/v1/auth/**",
+                "/v3/api-docs/**",
+                "/v3/api-docs.yaml",
+                "/swagger-ui/**",
+                "/swagger-ui.html"
+        };
         http.authorizeRequests(authorizeRequests ->
             authorizeRequests
+                    .requestMatchers(AUTH_WHITELIST).permitAll()
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.POST,"/api/v1/auth/createUser").permitAll()
-
                 .anyRequest().authenticated() // require authentication for all other endpoints
         ).oauth2ResourceServer(oauth2 ->
             oauth2

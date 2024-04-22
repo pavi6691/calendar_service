@@ -14,6 +14,7 @@ import com.acme.calendar.service.model.User.UserRoleRequest;
 import com.acme.calendar.service.model.User.UserToGroupRequest;
 import com.acme.calendar.service.service.KeycloakAdmin;
 import com.acme.calendar.service.utils.KeyCloakUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.keycloak.representations.AccessTokenResponse;
@@ -34,14 +35,14 @@ public class AuthController {
     public AuthController() {
         this.keycloak = new KeycloakAdmin();
     }
-
+    @Operation(summary = "Create user", description = "Register user", tags = { "Auth" })
     @PostMapping(path=KeycloakConstants.CREATE_USER,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> createUser(@RequestBody UserRequest userRequest) {
         Response response = keycloak.createUser(userRequest.email, userRequest.firstName, userRequest.lastName, userRequest.password);
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Create group", description = "Create group to manage users", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.CREATE_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> createGroup(@RequestBody GroupRequest groupRequest) {
@@ -49,7 +50,7 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Create role", description = "Create Roles for user and groups", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.CREATE_ROLE,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> createRole(@RequestBody RoleRequest roleRequest) {
