@@ -10,9 +10,9 @@ public class KeycloakConstants {
     public static final String ADMIN_USERNAME = "admin";
     public static final String ADMIN_PASSWORD = "admin@1234";
 
-    public static final String CLIENT_ID = "f0262919-c4d5-4f74-a106-827c39b7db34";
-    public static final String CLIENT_NAME = "calender-ui";
-    public static final String CLIENT_SECRET = "UCrcw4vQ671R4SXJGrklz8NqugxHSBpU";
+    public static final String CLIENT_ID = "72f2da9e-98fa-49cb-a51b-6ee372778852";
+    public static final String CLIENT_NAME = "calendar-ui";
+    public static final String CLIENT_SECRET = "DolbWZ231iBwF9G0KnDNGFQsXE0KYEnG";
 
     public static final String CREATE_USER = "/createUser";
     public static final String CREATE_GROUP = "/createGroup";
