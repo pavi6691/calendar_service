@@ -42,6 +42,18 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
+    @Operation(summary = "Login", description = "Login", tags = { "Auth" })
+    @PostMapping(path = KeycloakConstants.LOGIN)
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        AccessTokenResponse token = null;
+        try {
+            token = keycloak.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.httpStatusCode()).body(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.errorMessage());
+        }
+        return ResponseEntity.ok(new JwtResponse(token.getToken()));
+    }
     @Operation(summary = "Create group", description = "Create group to manage users", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.CREATE_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +70,7 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Assign role to user", description = "Assign Roles for user", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.ASSIGN_ROLE,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> assignRole(@RequestBody UserRoleRequest userRoleRequest) {
@@ -66,7 +78,7 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Invite user", description = "Invite User for accessing collections/calendar", tags = { "Auth" })
     @PostMapping(path = KeycloakConstants.INVITE_USER, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> inviteUser(@RequestBody UserDataSet userDataSet) {
         try {
@@ -79,7 +91,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel("Error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
-
+    @Operation(summary = "Assign role to group", description = "Assign role to group", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.ASSIGN_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> assignGroup(@RequestBody RoleGroupRequest roleGroupRequest) {
@@ -87,7 +99,7 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Add user to group", description = "Add user to group", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.ADD_USER_TO_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> addUserToGroup(@RequestBody UserToGroupRequest userToGroupRequest) {
@@ -95,24 +107,12 @@ public class AuthController {
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
     }
-
+    @Operation(summary = "Remove user role", description = "Remove user role", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @DeleteMapping(path = KeycloakConstants.REVOKE_INVITE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> removeUserRole(@RequestBody UserRoleRequest userRoleRequest) {
         Response response = keycloak.revokeRoleFromUser(userRoleRequest.username, userRoleRequest.role);
         ResponseModel responseModel = KeyCloakUtil.extractUserData(response);
         return ResponseEntity.ok(responseModel);
-    }
-
-    @PostMapping(path = KeycloakConstants.LOGIN)
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        AccessTokenResponse token = null;
-        try {
-            token = keycloak.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-
-        } catch (Exception e) {
-            return ResponseEntity.status(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.httpStatusCode()).body(KeyCloakAPIError.ERROR_LOGIN_FAILED_CHECK_USERNAME_PASSWORD.errorMessage());
-        }
-        return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }
 }
