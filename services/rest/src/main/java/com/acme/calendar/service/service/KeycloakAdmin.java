@@ -259,6 +259,15 @@ public class KeycloakAdmin {
         return accessToken;
     }
 
+    public  AccessTokenResponse refreshAccessToken(String refreshToken) {
+        Config config = new Config(SERVER_URL, REALM, ADMIN_USERNAME, ADMIN_PASSWORD, CLIENT_NAME, CLIENT_SECRET);
+        jakarta.ws.rs.client.Client client = ClientBuilder.newClient();
+        TokenManager tokenManager = new TokenManager(config, client);
+        tokenManager.getAccessToken().setRefreshToken(refreshToken);
+        AccessTokenResponse refreshedTokenResponse = tokenManager.refreshToken();
+        return refreshedTokenResponse;
+    }
+
     private static boolean userHasRole(String userId, String roleId) {
         return keycloak.realm(REALM).users().get(userId).roles().realmLevel().listEffective().stream()
             .anyMatch(role -> role.getId().equals(roleId));

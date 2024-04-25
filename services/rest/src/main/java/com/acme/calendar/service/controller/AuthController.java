@@ -54,6 +54,19 @@ public class AuthController {
         }
         return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }
+
+    @PostMapping(path = KeycloakConstants.REFRESH_TOKEN)
+    public ResponseEntity<?> refreshToken(@RequestParam("refreshToken") String refreshTokenValue) {
+        AccessTokenResponse token = null;
+        try {
+            token = keycloak.refreshAccessToken(refreshTokenValue);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(KeyCloakAPIError.ERROR_DURING_AUTHENTICATION.httpStatusCode()).body(KeyCloakAPIError.ERROR_DURING_AUTHENTICATION.errorMessage());
+        }
+        return ResponseEntity.ok(new JwtResponse(token.getToken(), token.getExpiresIn(), token.getRefreshToken(), token.getRefreshExpiresIn()));
+    }
+
     @Operation(summary = "Create group", description = "Create group to manage users", tags = { "Auth" })
     @PreAuthorize("hasRole('admin')")
     @PostMapping(path=KeycloakConstants.CREATE_GROUP,consumes = MediaType.APPLICATION_JSON_VALUE)

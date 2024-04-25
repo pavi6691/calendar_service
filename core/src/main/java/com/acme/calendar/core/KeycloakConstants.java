@@ -23,4 +23,5 @@ public class KeycloakConstants {
     public static final String ADD_USER_TO_GROUP = "/addUserToGroup";
     public static final String REVOKE_INVITE = "/roles/remove";
     public static final String LOGIN =  "/login";
+    public static final String REFRESH_TOKEN = "/refreshToken";
 }
